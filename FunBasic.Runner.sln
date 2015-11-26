@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "fbi", "fbi\fbi.fsproj", "{A5005572-B923-4A68-A5C5-692843A18A12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunBasic.Interactive", "FunBasic.Interactive\FunBasic.Interactive.csproj", "{92C808A0-872F-4B2B-A941-92794F2E710A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A5005572-B923-4A68-A5C5-692843A18A12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5005572-B923-4A68-A5C5-692843A18A12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5005572-B923-4A68-A5C5-692843A18A12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5005572-B923-4A68-A5C5-692843A18A12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92C808A0-872F-4B2B-A941-92794F2E710A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92C808A0-872F-4B2B-A941-92794F2E710A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92C808A0-872F-4B2B-A941-92794F2E710A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92C808A0-872F-4B2B-A941-92794F2E710A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
