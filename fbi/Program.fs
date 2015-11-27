@@ -12,10 +12,20 @@ open System.Reflection
 open System.Threading
 
 let code = """
-number = 100
-While (number > 1)
-  TextWindow.WriteLine(number)
-  number = number / 2
+D2D.Show()
+
+D2D.Clear()
+
+visual_rect = D2D.Rectangle("#FF0000", "#000", 1, 0, 0, 100, 100)
+
+x = 0
+
+While D2D.LastKey = ""
+  x = x + 2
+
+  D2D.Move(visual_rect, x, 0)
+
+  D2D.WaitForRefresh()
 EndWhile
 """
 
@@ -128,9 +138,9 @@ let initLibrary () =
       member x.Interval 
         with get () = 100
         and  set v  = ()
-      member x.add_Tick (handler) =
+      member x.add_Tick handler =
         ()
-      member x.remove_Tick (handler) =
+      member x.remove_Tick handler =
         ()
       member x.Pause() =
         ()
@@ -138,10 +148,29 @@ let initLibrary () =
         ()
     }
 
+  let keyboard =
+    { new IKeyboard with
+      member x.LastKey 
+        with get () = 
+          if Console.KeyAvailable then
+            let k = Console.ReadKey()
+            k.KeyChar.ToString ()
+          else
+            ""
+      member x.add_KeyDown handler =
+        ()
+      member x.remove_KeyDown handler =
+        ()
+      member x.add_KeyUp handler =
+        ()
+      member x.remove_KeyUp handler =
+        ()
+    }
+
   let cts = new CancellationTokenSource ()
   let ct  = cts.Token
 
-  _Library.Initialize (console, surface, style, null, shapes, null, null, null, null, null, timer, null, null, ct)
+  _Library.Initialize (console, surface, style, null, shapes, null, null, null, keyboard, null, timer, null, null, ct)
 
   cts
 

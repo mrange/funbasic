@@ -7,6 +7,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "fbi", "fbi\fbi.fsproj", "{A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunBasic.Interactive", "FunBasic.Interactive\FunBasic.Interactive.csproj", "{92C808A0-872F-4B2B-A941-92794F2E710A}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FunBasic.DirectX", "FunBasic.DirectX\FunBasic.DirectX.fsproj", "{48E6E448-B301-49E9-9F43-A6E63D29F7A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{92C808A0-872F-4B2B-A941-92794F2E710A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92C808A0-872F-4B2B-A941-92794F2E710A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92C808A0-872F-4B2B-A941-92794F2E710A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48E6E448-B301-49E9-9F43-A6E63D29F7A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48E6E448-B301-49E9-9F43-A6E63D29F7A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48E6E448-B301-49E9-9F43-A6E63D29F7A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48E6E448-B301-49E9-9F43-A6E63D29F7A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1466,6 +1466,7 @@ namespace FunBasic.Library
          CancellationToken token)
       {
          TextWindow.Init(console);
+         D2D.Init(keyboard);
          Desktop.Init(surface);                  
          GraphicsWindow.Init(style, surface, drawing, keyboard, mouse);
          Shapes.Init(shapes);
