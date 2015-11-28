@@ -16,17 +16,32 @@ D2D.Show()
 
 D2D.Clear()
 
-visual_rect = D2D.Rectangle("#FF0000", "#000", 1, 0, 0, 100, 100)
+brush_fill      = 0001
+brush_stroke    = 0002
+
+visual_rect     = 0001
+visual_ellipse  = 0002
+
+D2D.SolidBrush  (brush_fill  , "#0FF")
+D2D.SolidBrush  (brush_stroke, "#00FF7f")
+
+D2D.Rectangle   (visual_rect, brush_fill, brush_stroke, 3, 0, 0, 100, 100)
+D2D.Ellipse     (visual_ellipse, brush_fill, brush_stroke, 3, 200, 200, 20, 20)
 
 x = 0
+y = 0
 
 While D2D.LastKey = ""
   x = x + 2
+  y = y + 1
 
-  D2D.Move(visual_rect, x, 0)
+  D2D.Move(visual_rect, x, y)
 
   D2D.WaitForRefresh()
 EndWhile
+
+D2D.Discard ()
+
 """
 
 let colorprint (cc : ConsoleColor) (msg : string) : unit =

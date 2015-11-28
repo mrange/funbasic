@@ -1,4 +1,4 @@
-﻿module FunBasic.DirectX.Direct2d
+﻿module internal FunBasic.DirectX.Direct2d
 
 open System
 open System.Collections.Generic
@@ -9,7 +9,7 @@ open FunBasic.DirectX.Common
 
 type BrushDescriptor =
   | Transparent
-  | SolidBrush of Color
+  | SolidBrush of Color4
 
   member x.IsVisible =
     match x with
@@ -19,8 +19,14 @@ type BrushDescriptor =
 type TextFormatDescriptor =
   | SimpleTextFormat of string * float32
 
+type DeviceInit =
+  {
+    Brushes     : (BrushId*BrushDescriptor) []
+    TextFormats : (TextFormatId*TextFormatDescriptor) []
+  }
 
 type Device (form : Windows.RenderForm) =
+
   let getDeviceAndSwapChain (form : Windows.RenderForm) =
     let width               = form.ClientSize.Width
     let height              = form.ClientSize.Height
@@ -79,31 +85,92 @@ type Device (form : Windows.RenderForm) =
                                 )
                               )
 
-  let brushes             = Dictionary<BrushDescriptor, Direct2D1.Brush> ()
+  let brushes             = Dictionary<BrushId, BrushDescriptor*Direct2D1.Brush> ()
+  let textFormats         = Dictionary<TextFormatId, TextFormatDescriptor*DirectWrite.TextFormat> ()
 
-  let createBrush (bd : BrushDescriptor) : Direct2D1.Brush =
+  let makeUpdater (creator : 'K -> 'U -> 'U*'V ) : 'K  -> 'U*'V -> 'U -> 'U*'V =
+    fun k uv u ->
+      let pu, v = uv
+      if Object.ReferenceEquals (u, v) then 
+        uv
+      else
+        let nv = creator k u
+        dispose v
+        nv
+
+  let createBrush (bid : BrushId) (bd : BrushDescriptor) : BrushDescriptor*Direct2D1.Brush =
     match bd with
-    | Transparent   -> null
-    | SolidBrush c  -> upcast new Direct2D1.SolidColorBrush (d2dRenderTarget, c.ToColor4 ())
+    | Transparent   -> bd, null
+    | SolidBrush c  -> bd, upcast new Direct2D1.SolidColorBrush (d2dRenderTarget, c)
 
-  let textFormats         = Dictionary<TextFormatDescriptor, DirectWrite.TextFormat> ()
-
-  let createTextFormat (tfd : TextFormatDescriptor) : DirectWrite.TextFormat =
+  let createTextFormat (tfid : TextFormatId) (tfd : TextFormatDescriptor) : TextFormatDescriptor*DirectWrite.TextFormat =
     match tfd with
     | SimpleTextFormat (fontFamilyName, fontSize) ->
-        new DirectWrite.TextFormat (dwFactory, fontFamilyName, fontSize)
+        tfd, new DirectWrite.TextFormat (dwFactory, fontFamilyName, fontSize)
 
-  member x.GetBrush (bd : BrushDescriptor) : Direct2D1.Brush =
-    brushes.GetOrCreate bd createBrush
+  let updateBrush = makeUpdater createBrush
 
-  member x.GetTextFormat (tfd : TextFormatDescriptor) : DirectWrite.TextFormat =
-    textFormats.GetOrCreate tfd createTextFormat
+  let updateTextFormat = makeUpdater createTextFormat
+
+  let disposeResourceDictionary (d : IDictionary<_, _*#IDisposable>) : unit =
+    try
+      for kv in d do
+        dispose (snd kv.Value)
+    finally
+        d.Clear ()
+
+  let disposeResources () : unit =
+    disposeResourceDictionary brushes
+    disposeResourceDictionary textFormats
+
+  let findResource (k : 'K) (d : Dictionary<'K, 'U*'V>) : 'V =
+    let ok, uv = d.TryGetValue k
+    if ok then
+      snd uv
+    else
+      null
+
+  member x.InitializeResources (di : DeviceInit) : unit =
+    disposeResources ()
+
+    for bid, bd in di.Brushes do
+      ignore <| brushes.GetOrCreate bid bd createBrush
+
+    for tfid, tfd in di.TextFormats do
+      ignore <| textFormats.GetOrCreate tfid tfd createTextFormat
+
+  member x.CreateDeviceInit () : DeviceInit =
+    let inline stripResource (s : Dictionary<'K, 'U*'V>) =
+      s
+      |> Seq.map (fun kv -> kv.Key, fst kv.Value)
+      |> Seq.toArray
+
+    let bs =
+      brushes
+      |> stripResource
+    let tfs =
+      textFormats
+      |> stripResource
+
+    { Brushes = bs; TextFormats = tfs }
+
+  member x.CreateBrush (bid :  BrushId) (bd : BrushDescriptor) : Direct2D1.Brush =
+    snd <| brushes.CreateOrUpdate bid bd createBrush updateBrush
+
+  member x.GetBrush (bid : BrushId) : Direct2D1.Brush =
+    findResource bid brushes
+
+  member x.CreateTextFormat (tfid : TextFormatId) (tfd : TextFormatDescriptor)  : DirectWrite.TextFormat =
+    snd <| textFormats.CreateOrUpdate tfid tfd createTextFormat updateTextFormat
+
+  member x.GetTextFormat (tfid : TextFormatId) : DirectWrite.TextFormat =
+    findResource tfid textFormats
 
   member x.Width                  = width
   member x.Height                 = height
   member x.ClientSize             = size2 (float32 width) (float32 height)
 
-  member x.Draw (a : Direct2D1.RenderTarget->unit) =
+  member x.Draw (a : Direct2D1.RenderTarget -> bool) : bool =
     d2dRenderTarget.BeginDraw ()
     try
       a d2dRenderTarget
@@ -111,11 +178,9 @@ type Device (form : Windows.RenderForm) =
         d2dRenderTarget.EndDraw ()
         swapChain.Present (1, DXGI.PresentFlags.None)
 
-
   interface IDisposable with
     member x.Dispose () =
-      disposeValuesInDictionary textFormats
-      disposeValuesInDictionary brushes
+      disposeResources ()
 
       dispose d2dRenderTarget
       dispose surface
@@ -127,35 +192,42 @@ type Device (form : Windows.RenderForm) =
       dispose dwFactory
 
 module Window =
+
   let show
     (title      : string                                  )
     (width      : int                                     )
     (height     : int                                     )
     (onKeyUp    : int -> unit                             )
-    (onRender   : Device -> Direct2D1.RenderTarget -> unit) =
-      use form                = new Windows.RenderForm (title)
+    (onRender   : Device -> Direct2D1.RenderTarget -> bool) =
+    use form                = new Windows.RenderForm (title)
 
-      form.ClientSize         <- Drawing.Size (width,height)
+    form.ClientSize         <- Drawing.Size (width,height)
 
-      let device              = ref <| new Device (form)
+    let device              = ref <| new Device (form)
 
-      let disposeDevice ()    = dispose !device
-      let recreateDevice ()   = disposeDevice ()
-                                device := new Device (form)
+    let disposeDevice ()    = dispose !device
+    let recreateDevice ()   =
+      let di = (!device).CreateDeviceInit ()
+      disposeDevice ()
+      device := new Device (form)
+      (!device).InitializeResources di
 
-      use onExitDisposeDevice = onExit disposeDevice
+    use onExitDisposeDevice = onExit disposeDevice
 
-      let resizer             = EventHandler (fun o e -> recreateDevice ())
-      let keyUp               = Windows.Forms.KeyEventHandler (fun o e -> onKeyUp e.KeyValue)
+    let resizer             = EventHandler (fun o e -> recreateDevice ())
+    let keyUp               = Windows.Forms.KeyEventHandler (fun o e -> onKeyUp e.KeyValue)
 
-      form.Resize.AddHandler resizer
-      form.KeyUp.AddHandler keyUp
+    form.Resize.AddHandler resizer
+    form.KeyUp.AddHandler keyUp
 
-      use onExitRemoveHandler = onExit <| fun () -> form.Resize.RemoveHandler resizer
+    use onExitRemoveHandler = onExit <| fun () -> form.Resize.RemoveHandler resizer
 
-      let render () =
-        let d = !device
+    let render () =
+      let d = !device
 
-        d.Draw <| fun d2dRenderTarget -> onRender d d2dRenderTarget
+      let cont = d.Draw <| fun d2dRenderTarget -> onRender d d2dRenderTarget
 
-      Windows.RenderLoop.Run (form, render)
+      if not cont then
+        form.Close ()
+
+    Windows.RenderLoop.Run (form, render)

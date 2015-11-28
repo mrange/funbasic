@@ -64,14 +64,29 @@ namespace FunBasic.Library
       Scene.WaitForRefresh ();
     }
 
-    public static void Move (int id, double x, double y)
+    public static void Background (string color)
     {
-      Scene.Move (id, x, y);
+      Scene.Background (brushId, color);
+    }
+                                   
+    public static void SolidBrush (int brushId, string color)
+    {
+      Scene.SolidBrush (brushId, color);
     }
 
-    public static int Rectangle (object fillBrush, object strokeBrush, double strokeWidth, double x, double y, double w, double h)
+    public static void Move (int visualId, double x, double y)
     {
-      return Scene.Rectangle (fillBrush, strokeBrush, strokeWidth, x, y, w, h);
+      Scene.Move (visualId, x, y);
+    }
+
+    public static void Rectangle (int visualId, int fillBrush, int strokeBrush, double strokeWidth, double x, double y, double w, double h)
+    {
+      Scene.Rectangle (visualId, fillBrush, strokeBrush, strokeWidth, x, y, w, h);
+    }
+
+    public static void Ellipse (int visualId, int fillBrush, int strokeBrush, double strokeWidth, double x, double y, double w, double h)
+    {
+      Scene.Ellipse (visualId, fillBrush, strokeBrush, strokeWidth, x, y, w, h);
     }
 
     public static string LastKey
