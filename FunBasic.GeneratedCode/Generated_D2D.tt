@@ -3,6 +3,8 @@
 
 namespace FunBasic.Library
 {
+  using FunBasic.DirectX.ApiModel;
+
   static partial class D2D
   {
 <#
@@ -15,16 +17,22 @@ namespace FunBasic.Library
 
   foreach (var g in grouped)
   {
-    var prefix = g.Key;
+  var prefix = g.Key;
+#>
+    // ------------------------------------------------------------------------
+    // Prefix: <#=prefix.Name#>
+    // ------------------------------------------------------------------------
+
+<#
   foreach (var md in g.OrderBy (md => md.Verb).ThenBy (md => md.Noun))
   {
-    var allParameters = prefix.PrependWith.Concat (md).ToArray ();
+    var pds = prefix.PrependWith.Concat (md).ToArray ();
 #>
-    // Method: <#=md.Verb#><#=md.Noun#>
+    // Method: <#=md.Verb#><#=md.Noun#> <#=ToTypeTupleNames (pds)#>
     public static void <#=md.Verb#><#=md.Noun#> (
 <#
   prepend = "  ";
-  foreach (var p in allParameters)
+  foreach (var p in pds)
   {
 #>
       <#=prepend#><#=LeftJustify (p.Type, 10)#> <#=p.Name#>
@@ -35,7 +43,7 @@ namespace FunBasic.Library
       )
     {
       Scene.SendInput (
-        new Input.New<#=prefix.Name#> (
+        Input.New<#=prefix.Name#> (
 <#
   prepend = "  ";
   foreach (var p in prefix.PrependWith)
@@ -45,11 +53,15 @@ namespace FunBasic.Library
 <#
     prepend = ", ";
   }
+
+  var ipds = md.ToArray ();
+  if (ipds.Length > 0)
+  {
 #>
-          <#=prepend#>new <#=prefix.Name#>.New<#=md.Verb#><#=md.Noun#> (
+          <#=prepend#><#=prefix.Name#>.New<#=md.Verb#><#=md.Noun#> (
 <#
   prepend = "  ";
-  foreach (var p in md)
+  foreach (var p in ipds)
   {
 #>
             <#=prepend#><#=p.Name#>
@@ -57,12 +69,22 @@ namespace FunBasic.Library
     prepend = ", ";
   }
 #>
-            )));
+            )
+<#
+  }
+  else
+  {
+#>
+          <#=prepend#><#=prefix.Name#>.<#=md.Verb#><#=md.Noun#>
+<#
+  }
+#>
+          )
+        );
     }
 
 <#
   }
-
   }
 #>
   }

@@ -6,99 +6,198 @@
 
 namespace FunBasic.Library
 {
+  using FunBasic.DirectX.ApiModel;
+
   static partial class D2D
   {
-    // Method: DownloadBitmap
+    // ------------------------------------------------------------------------
+    // Prefix: BitmapInput
+    // ------------------------------------------------------------------------
+
+    // Method: DownloadBitmap (bitmapId, url)
     public static void DownloadBitmap (
         int        bitmapId
       , string     url
       )
     {
       Scene.SendInput (
-        new Input.NewBitmapInput (
+        Input.NewBitmapInput (
             bitmapId
-          , new BitmapInput.NewDownloadBitmap (
+          , BitmapInput.NewDownloadBitmap (
               url
-            )));
+            )
+          )
+        );
     }
 
-    // Method: CreateSolidBrush
+    // ------------------------------------------------------------------------
+    // Prefix: BrushInput
+    // ------------------------------------------------------------------------
+
+    // Method: CreateGradientStopForBrush (brushId, color, offset)
+    public static void CreateGradientStopForBrush (
+        int        brushId
+      , string     color
+      , double     offset
+      )
+    {
+      Scene.SendInput (
+        Input.NewBrushInput (
+            brushId
+          , BrushInput.NewCreateGradientStopForBrush (
+              color
+            , offset
+            )
+          )
+        );
+    }
+
+    // Method: CreateLinearGradientBrush (brushId, startX, startY, endX, endY, extendMode)
+    public static void CreateLinearGradientBrush (
+        int        brushId
+      , double     startX
+      , double     startY
+      , double     endX
+      , double     endY
+      , string     extendMode
+      )
+    {
+      Scene.SendInput (
+        Input.NewBrushInput (
+            brushId
+          , BrushInput.NewCreateLinearGradientBrush (
+              startX
+            , startY
+            , endX
+            , endY
+            , extendMode
+            )
+          )
+        );
+    }
+
+    // Method: CreateRadialGradientBrush (brushId, centerX, centerY, radiusX, radiusY, offsetX, offsetY, extendMode)
+    public static void CreateRadialGradientBrush (
+        int        brushId
+      , double     centerX
+      , double     centerY
+      , double     radiusX
+      , double     radiusY
+      , double     offsetX
+      , double     offsetY
+      , string     extendMode
+      )
+    {
+      Scene.SendInput (
+        Input.NewBrushInput (
+            brushId
+          , BrushInput.NewCreateRadialGradientBrush (
+              centerX
+            , centerY
+            , radiusX
+            , radiusY
+            , offsetX
+            , offsetY
+            , extendMode
+            )
+          )
+        );
+    }
+
+    // Method: CreateSolidBrush (brushId, color)
     public static void CreateSolidBrush (
         int        brushId
       , string     color
       )
     {
       Scene.SendInput (
-        new Input.NewBrushInput (
+        Input.NewBrushInput (
             brushId
-          , new BrushInput.NewCreateSolidBrush (
+          , BrushInput.NewCreateSolidBrush (
               color
-            )));
+            )
+          )
+        );
     }
 
-    // Method: ClearVisuals
+    // ------------------------------------------------------------------------
+    // Prefix: GlobalInput
+    // ------------------------------------------------------------------------
+
+    // Method: ClearVisuals 
     public static void ClearVisuals (
       )
     {
       Scene.SendInput (
-        new Input.NewGlobalInput (
-            new GlobalInput.NewClearVisuals (
-            )));
+        Input.NewGlobalInput (
+            GlobalInput.ClearVisuals
+          )
+        );
     }
 
-    // Method: CloseWindow
+    // Method: CloseWindow 
     public static void CloseWindow (
       )
     {
       Scene.SendInput (
-        new Input.NewGlobalInput (
-            new GlobalInput.NewCloseWindow (
-            )));
+        Input.NewGlobalInput (
+            GlobalInput.CloseWindow
+          )
+        );
     }
 
-    // Method: DoNothing
+    // Method: DoNothing 
     public static void DoNothing (
       )
     {
       Scene.SendInput (
-        new Input.NewGlobalInput (
-            new GlobalInput.NewDoNothing (
-            )));
+        Input.NewGlobalInput (
+            GlobalInput.DoNothing
+          )
+        );
     }
 
-    // Method: HideWindow
+    // Method: HideWindow 
     public static void HideWindow (
       )
     {
       Scene.SendInput (
-        new Input.NewGlobalInput (
-            new GlobalInput.NewHideWindow (
-            )));
+        Input.NewGlobalInput (
+            GlobalInput.HideWindow
+          )
+        );
     }
 
-    // Method: SetBackground
+    // Method: SetBackground (color)
     public static void SetBackground (
         string     color
       )
     {
       Scene.SendInput (
-        new Input.NewGlobalInput (
-            new GlobalInput.NewSetBackground (
+        Input.NewGlobalInput (
+            GlobalInput.NewSetBackground (
               color
-            )));
+            )
+          )
+        );
     }
 
-    // Method: ShowWindow
+    // Method: ShowWindow 
     public static void ShowWindow (
       )
     {
       Scene.SendInput (
-        new Input.NewGlobalInput (
-            new GlobalInput.NewShowWindow (
-            )));
+        Input.NewGlobalInput (
+            GlobalInput.ShowWindow
+          )
+        );
     }
 
-    // Method: CreateTextFormat
+    // ------------------------------------------------------------------------
+    // Prefix: TextFormatInput
+    // ------------------------------------------------------------------------
+
+    // Method: CreateTextFormat (textFormatId, fontFamily, fontSize)
     public static void CreateTextFormat (
         int        textFormatId
       , string     fontFamily
@@ -106,39 +205,47 @@ namespace FunBasic.Library
       )
     {
       Scene.SendInput (
-        new Input.NewTextFormatInput (
+        Input.NewTextFormatInput (
             textFormatId
-          , new TextFormatInput.NewCreateTextFormat (
+          , TextFormatInput.NewCreateTextFormat (
               fontFamily
             , fontSize
-            )));
+            )
+          )
+        );
     }
 
-    // Method: CreateBitmapVisual
+    // ------------------------------------------------------------------------
+    // Prefix: VisualInput
+    // ------------------------------------------------------------------------
+
+    // Method: CreateBitmapVisual (visualId, bitmapId, opacity, centerX, centerY, width, height)
     public static void CreateBitmapVisual (
         int        visualId
       , int        bitmapId
       , double     opacity
-      , double     centerX 
+      , double     centerX
       , double     centerY
       , double     width
       , double     height
       )
     {
       Scene.SendInput (
-        new Input.NewVisualInput (
+        Input.NewVisualInput (
             visualId
-          , new VisualInput.NewCreateBitmapVisual (
+          , VisualInput.NewCreateBitmapVisual (
               bitmapId
             , opacity
-            , centerX 
+            , centerX
             , centerY
             , width
             , height
-            )));
+            )
+          )
+        );
     }
 
-    // Method: CreateEllipseVisual
+    // Method: CreateEllipseVisual (visualId, fillBrushId, strokeBrushId, strokeWidth, centerX, centerY, width, height)
     public static void CreateEllipseVisual (
         int        visualId
       , int        fillBrushId
@@ -151,9 +258,9 @@ namespace FunBasic.Library
       )
     {
       Scene.SendInput (
-        new Input.NewVisualInput (
+        Input.NewVisualInput (
             visualId
-          , new VisualInput.NewCreateEllipseVisual (
+          , VisualInput.NewCreateEllipseVisual (
               fillBrushId
             , strokeBrushId
             , strokeWidth
@@ -161,10 +268,12 @@ namespace FunBasic.Library
             , centerY
             , width
             , height
-            )));
+            )
+          )
+        );
     }
 
-    // Method: CreateRectangleVisual
+    // Method: CreateRectangleVisual (visualId, fillBrushId, strokeBrushId, strokeWidth, centerX, centerY, width, height)
     public static void CreateRectangleVisual (
         int        visualId
       , int        fillBrushId
@@ -177,9 +286,9 @@ namespace FunBasic.Library
       )
     {
       Scene.SendInput (
-        new Input.NewVisualInput (
+        Input.NewVisualInput (
             visualId
-          , new VisualInput.NewCreateRectangleVisual (
+          , VisualInput.NewCreateRectangleVisual (
               fillBrushId
             , strokeBrushId
             , strokeWidth
@@ -187,10 +296,12 @@ namespace FunBasic.Library
             , centerY
             , width
             , height
-            )));
+            )
+          )
+        );
     }
 
-    // Method: CreateTextVisual
+    // Method: CreateTextVisual (visualId, fillBrushId, textFormatId, centerX, centerY, width, height, text)
     public static void CreateTextVisual (
         int        visualId
       , int        fillBrushId
@@ -203,9 +314,9 @@ namespace FunBasic.Library
       )
     {
       Scene.SendInput (
-        new Input.NewVisualInput (
+        Input.NewVisualInput (
             visualId
-          , new VisualInput.NewCreateTextVisual (
+          , VisualInput.NewCreateTextVisual (
               fillBrushId
             , textFormatId
             , centerX
@@ -213,10 +324,12 @@ namespace FunBasic.Library
             , width
             , height
             , text
-            )));
+            )
+          )
+        );
     }
 
-    // Method: MoveVisual
+    // Method: MoveVisual (visualId, x, y)
     public static void MoveVisual (
         int        visualId
       , double     x
@@ -224,15 +337,17 @@ namespace FunBasic.Library
       )
     {
       Scene.SendInput (
-        new Input.NewVisualInput (
+        Input.NewVisualInput (
             visualId
-          , new VisualInput.NewMoveVisual (
+          , VisualInput.NewMoveVisual (
               x
             , y
-            )));
+            )
+          )
+        );
     }
 
-    // Method: ResizeVisual
+    // Method: ResizeVisual (visualId, width, height)
     public static void ResizeVisual (
         int        visualId
       , double     width
@@ -240,12 +355,14 @@ namespace FunBasic.Library
       )
     {
       Scene.SendInput (
-        new Input.NewVisualInput (
+        Input.NewVisualInput (
             visualId
-          , new VisualInput.NewResizeVisual (
+          , VisualInput.NewResizeVisual (
               width
             , height
-            )));
+            )
+          )
+        );
     }
 
   }

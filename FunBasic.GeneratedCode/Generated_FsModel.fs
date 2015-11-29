@@ -5,51 +5,67 @@
 
 
 
-    type BitmapInput =
-    // Method: DownloadBitmap
-    | DownloadBitmap       of url:string
+  // Prefix: BitmapInput
+  type BitmapInput =
+  // Method: DownloadBitmap (url)
+  | DownloadBitmap       of url:string
 
-    type BrushInput =
-    // Method: CreateSolidBrush
-    | CreateSolidBrush     of color:string
+  // Prefix: BrushInput
+  type BrushInput =
+  // Method: CreateGradientStopForBrush (color, offset)
+  | CreateGradientStopForBrush of color:string*offset:double
+  // Method: CreateLinearGradientBrush (startX, startY, endX, endY, extendMode)
+  | CreateLinearGradientBrush of startX:double*startY:double*endX:double*endY:double*extendMode:string
+  // Method: CreateRadialGradientBrush (centerX, centerY, radiusX, radiusY, offsetX, offsetY, extendMode)
+  | CreateRadialGradientBrush of centerX:double*centerY:double*radiusX:double*radiusY:double*offsetX:double*offsetY:double*extendMode:string
+  // Method: CreateSolidBrush (color)
+  | CreateSolidBrush     of color:string
 
-    type GlobalInput =
-    // Method: ClearVisuals
-    | ClearVisuals         of unit
-    // Method: CloseWindow
-    | CloseWindow          of unit
-    // Method: DoNothing
-    | DoNothing            of unit
-    // Method: HideWindow
-    | HideWindow           of unit
-    // Method: SetBackground
-    | SetBackground        of color:string
-    // Method: ShowWindow
-    | ShowWindow           of unit
+  // Prefix: GlobalInput
+  type GlobalInput =
+  // Method: ClearVisuals 
+  | ClearVisuals         
+  // Method: CloseWindow 
+  | CloseWindow          
+  // Method: DoNothing 
+  | DoNothing            
+  // Method: HideWindow 
+  | HideWindow           
+  // Method: SetBackground (color)
+  | SetBackground        of color:string
+  // Method: ShowWindow 
+  | ShowWindow           
 
-    type TextFormatInput =
-    // Method: CreateTextFormat
-    | CreateTextFormat     of fontFamily:string*fontSize:double
+  // Prefix: TextFormatInput
+  type TextFormatInput =
+  // Method: CreateTextFormat (fontFamily, fontSize)
+  | CreateTextFormat     of fontFamily:string*fontSize:double
 
-    type VisualInput =
-    // Method: CreateBitmapVisual
-    | CreateBitmapVisual   of bitmapId:int*opacity:double*centerX :double*centerY:double*width:double*height:double
-    // Method: CreateEllipseVisual
-    | CreateEllipseVisual  of fillBrushId:int*strokeBrushId:int*strokeWidth:double*centerX:double*centerY:double*width:double*height:double
-    // Method: CreateRectangleVisual
-    | CreateRectangleVisual of fillBrushId:int*strokeBrushId:int*strokeWidth:double*centerX:double*centerY:double*width:double*height:double
-    // Method: CreateTextVisual
-    | CreateTextVisual     of fillBrushId:int*textFormatId:int*centerX:double*centerY:double*width:double*height:double*text:string
-    // Method: MoveVisual
-    | MoveVisual           of x:double*y:double
-    // Method: ResizeVisual
-    | ResizeVisual         of width:double*height:double
+  // Prefix: VisualInput
+  type VisualInput =
+  // Method: CreateBitmapVisual (bitmapId, opacity, centerX, centerY, width, height)
+  | CreateBitmapVisual   of bitmapId:int*opacity:double*centerX:double*centerY:double*width:double*height:double
+  // Method: CreateEllipseVisual (fillBrushId, strokeBrushId, strokeWidth, centerX, centerY, width, height)
+  | CreateEllipseVisual  of fillBrushId:int*strokeBrushId:int*strokeWidth:double*centerX:double*centerY:double*width:double*height:double
+  // Method: CreateRectangleVisual (fillBrushId, strokeBrushId, strokeWidth, centerX, centerY, width, height)
+  | CreateRectangleVisual of fillBrushId:int*strokeBrushId:int*strokeWidth:double*centerX:double*centerY:double*width:double*height:double
+  // Method: CreateTextVisual (fillBrushId, textFormatId, centerX, centerY, width, height, text)
+  | CreateTextVisual     of fillBrushId:int*textFormatId:int*centerX:double*centerY:double*width:double*height:double*text:string
+  // Method: MoveVisual (x, y)
+  | MoveVisual           of x:double*y:double
+  // Method: ResizeVisual (width, height)
+  | ResizeVisual         of width:double*height:double
 
 
-    type Input =
-    | BitmapInput          of bitmapId:int*payload:BitmapInput
-    | BrushInput           of brushId:int*payload:BrushInput
-    | GlobalInput          of payload:GlobalInput
-    | TextFormatInput      of textFormatId:int*payload:TextFormatInput
-    | VisualInput          of visualId:int*payload:VisualInput
+  type Input =
+  // Prefix: BitmapInput (bitmapId, payload)
+  | BitmapInput          of bitmapId:int*payload:BitmapInput
+  // Prefix: BrushInput (brushId, payload)
+  | BrushInput           of brushId:int*payload:BrushInput
+  // Prefix: GlobalInput (payload)
+  | GlobalInput          of payload:GlobalInput
+  // Prefix: TextFormatInput (textFormatId, payload)
+  | TextFormatInput      of textFormatId:int*payload:TextFormatInput
+  // Prefix: VisualInput (visualId, payload)
+  | VisualInput          of visualId:int*payload:VisualInput
 

@@ -10,45 +10,7 @@ open System
 open System.Collections.Concurrent
 open System.Collections.Generic
 open System.Threading
-(*
-type VisualInput =
-                              // X       Y
-  | MoveVisual                of float32*float32
-                              // Width   Height
-  | ResizeVisual              of float32*float32
-                              // Bitmap   Opacity InterpolationMode                 Bounds
-  | CreateBitmap              of BitmapId*float32*Direct2D1.BitmapInterpolationMode*RectangleF
-                              // Width   Stroke  Fill    Bounds
-  | CreateEllipse             of float32*BrushId*BrushId*Direct2D1.Ellipse
-                              // Width   Stroke  Fill    Bounds
-  | CreateRectangle           of float32*BrushId*BrushId*RectangleF
-                              // Fill    TextFormat   Bounds     Text
-  | CreateText                of BrushId*TextFormatId*RectangleF*string
-
-type BrushInput =
-  | CreateSolidBrush          of Color4
-                              // Start   End     ExtendMode           
-  | CreateLinearGradientBrush of Vector2*Vector2*Direct2D1.ExtendMode
-                              // Center  Radius  Origin  ExtendMode           
-  | CreateRadialGradientBrush of Vector2*Vector2*Vector2*Direct2D1.ExtendMode
-  | CreateGradientStop        of Color4*float32
-
-type BitmapInput =
-  | CreateBitmapFromBits      of byte[]
-
-type TextFormatInput =
-  | CreateTextFormat          of string * float32
-
-type Input = 
-  | DoNothing
-  | Exit
-  | Clear
-  | Background                of Color4
-  | BitmapInput               of BitmapId*BitmapInput
-  | BrushInput                of BrushId*BrushInput
-  | TextFormatInput           of TextFormatId*TextFormatInput
-  | VisualInput               of VisualId*VisualInput
-*)
+open System.Text.RegularExpressions
 
 module internal SceneRenderer =
   type Vector       = float*float
@@ -93,10 +55,51 @@ module internal SceneRenderer =
       if fb.IsVisible && tfd <> null then
         rt.DrawText (t, tfd, r, fb)
 
-  let doNothing _ = 
+  let onKeyUp _ = 
     ()
 
+  let regexExtendMode = 
+    Regex ( @"^\s*((?<Clamp>clamp)|(?<Mirror>mirror)|(?<Wrap>wrap))\s*$"
+          , RegexOptions.IgnoreCase ||| RegexOptions.Compiled ||| RegexOptions.CultureInvariant
+          )
+
   let createRenderer (onRefresh :  unit -> unit) =
+    let inline createBitmapId i     = i*1<BitmapMeasure>
+    let inline createBrushId i      = i*1<BrushMeasure>
+    let inline createTextFormatId i = i*1<TextFormatMeasure>
+    let inline createVisualId i     = i*1<VisualMeasure>
+
+    let parseExtendMode (em : string) : Direct2D1.ExtendMode =
+      let m = regexExtendMode.Match em
+      if m.Groups.["Clamp"].Success then
+        Direct2D1.ExtendMode.Clamp
+      elif m.Groups.["Mirror"].Success then
+        Direct2D1.ExtendMode.Mirror
+      elif m.Groups.["Wrap"].Success then
+        Direct2D1.ExtendMode.Wrap
+      else
+        Direct2D1.ExtendMode.Clamp
+
+        
+
+    let inline v (x : float) (y : float) =
+      Vector2 (float32 x, float32 y)
+
+    let inline ecreate (x : float) (y : float) (w : float) (h : float) : Direct2D1.Ellipse =
+      Direct2D1.Ellipse (v2 (float32 x) (float32 y), float32 (w / 2.0), float32 (h / 2.0))
+    let inline rcreate (x : float) (y : float) (w : float) (h : float) : RectangleF = 
+      rectf (float32 (x - w / 2.0)) (float32 (y - h / 2.0)) (float32 w) (float32 h)
+
+    let inline rmove2 (x : float) (y : float) (r : RectangleF) = 
+      rectf (float32 x - r.Width / 2.0F) (float32 x - r.Height / 2.0F) r.Width r.Height
+    let inline rresize2 (w : float) (h : float) (r : RectangleF) = 
+      rectf r.X r.Y (float32 w) (float32 h)
+
+    let inline emove2 (x : float) (y : float) (e : Direct2D1.Ellipse) = 
+      ellipsef (float32 x) (float32 y) e.RadiusX e.RadiusY
+    let inline eresize2 (w : float) (h : float) (e : Direct2D1.Ellipse) = 
+      ellipsef e.Point.X e.Point.Y (float32 w / 2.0F) (float32 h / 2.0F)
+
     let input     = ConcurrentQueue<Input> ()
     let visuals   = Dictionary<VisualId, Visual> ()
     let background= ref <| Color.Black.ToColor4 ()
@@ -111,45 +114,43 @@ module internal SceneRenderer =
         EmptyVisual
       | CreateBitmapVisual (bitmapId, opacity, centerX, centerY, width, height) ->
         BitmapVisual (createBitmapId bitmapId, float32 opacity, Direct2D1.BitmapInterpolationMode.NearestNeighbor, rcreate centerX centerY width height)
-      | CreateEllipseVisual (sw, s, f, e) ->
-        EllipseVisual (sw, s, f, e)
-      | CreateRectangleVisual (sw, s, f, r) ->
-        RectangleVisual (sw, s, f, r)
-      | CreateTextVisual (bd, tfd, r, t) ->
-        TextVisual (bd, tfd, r, t)
+      | CreateEllipseVisual (fillBrushId, strokeBrushId, strokeWidth, centerX, centerY, width, height) ->
+        EllipseVisual (float32 strokeWidth, createBrushId strokeBrushId, createBrushId fillBrushId, ecreate centerX centerY width height)
+      | CreateRectangleVisual (fillBrushId, strokeBrushId, strokeWidth, centerX, centerY, width, height) ->
+        RectangleVisual (float32 strokeWidth, createBrushId strokeBrushId, createBrushId fillBrushId, rcreate centerX centerY width height)
+      | CreateTextVisual (fillBrushId, textFormatId, centerX, centerY, width, height, text) ->
+        TextVisual (createBrushId fillBrushId, createTextFormatId textFormatId, rcreate centerX centerY width height, text)
 
     let updateVisual k v u = 
       match u with
       | MoveVisual (x, y) ->
-        let pos = v2 x y
         match v with
         | EmptyVisual -> 
           EmptyVisual
         | BitmapVisual  (bid, o, bim, r) ->
-          BitmapVisual  (bid, o, bim, rmove2 pos r)
+          BitmapVisual  (bid, o, bim, rmove2 x y r)
         | EllipseVisual (sw, s, f, r) ->
-          EllipseVisual (sw, s, f, emove2 pos r)
+          EllipseVisual (sw, s, f, emove2 x y r)
         | RectangleVisual (sw, s, f, r) ->
-          RectangleVisual (sw, s, f, rmove2 pos r)
+          RectangleVisual (sw, s, f, rmove2 x y r)
         | TextVisual (bd, tfd, r, t) ->
-          TextVisual (bd, tfd, rmove2 pos r, t)
+          TextVisual (bd, tfd, rmove2 x y r, t)
       | ResizeVisual (w, h) ->
-        let sz = v2 w h
         match v with
         | EmptyVisual -> 
           EmptyVisual
         | BitmapVisual  (bid, o, bim, r) ->
-          BitmapVisual  (bid, o, bim, rresize2 sz r)
+          BitmapVisual  (bid, o, bim, rresize2 w h r)
         | EllipseVisual (sw, s, f, r) ->
-          EllipseVisual (sw, s, f, eresize2 sz r)
+          EllipseVisual (sw, s, f, eresize2 w h r)
         | RectangleVisual (sw, s, f, r) ->
-          RectangleVisual (sw, s, f, rresize2 sz r)
+          RectangleVisual (sw, s, f, rresize2 w h r)
         | TextVisual (bd, tfd, r, t) ->
-          TextVisual (bd, tfd, rresize2 sz r, t)
+          TextVisual (bd, tfd, rresize2 w h r, t)
       | _ ->
         createVisual k u
 
-    let doNothing = GlobalInput (DoNothing ())
+    let doNothing = GlobalInput DoNothing
     let onRender (delay : (unit -> unit) -> unit) (d : Device) (rt : Direct2D1.RenderTarget) : bool =
       let mutable cont  = true
       let mutable i     = doNothing 
@@ -157,43 +158,48 @@ module internal SceneRenderer =
         match i with
         | GlobalInput gi ->
           match gi with
-          | ClearVisuals _ ->
+          | ClearVisuals ->
             visuals.Clear ()
-          | CloseWindow _ ->
-            // TODO:
+          | CloseWindow ->
             cont <- false
-          | DoNothing _ ->
+          | DoNothing ->
             ()
-          | HideWindow _ ->
+          | HideWindow ->
             // TODO:
             ()
           | SetBackground color ->
             background := parseColor color
-          | ShowWindow _ ->
+          | ShowWindow ->
             // TODO:
             ()
-        | BitmapInput (bid, (CreateBitmapFromBits bytes)) ->
-          d.ReserveBitmap bid (BitmapBits bytes)
+        | BitmapInput (bid, (DownloadBitmap url)) ->
+          // TODO:
+          // d.ReserveBitmap bid (BitmapBits bytes)
+          ()
         | BrushInput (bid, bi) ->
+          let bid = createBrushId bid
           match bi with
-          | CreateSolidBrush c ->
-            d.ReserveBrush bid (SolidBrush c)
-          | CreateLinearGradientBrush (s, e, em) ->
-            d.ReserveBrush bid (LinearGradientBrush (s, e, em, [||]))
-          | CreateRadialGradientBrush (c, r, o, em) ->
-            d.ReserveBrush bid (RadialGradientBrush (c, r, o, em, [||]))
-          | CreateGradientStop (color, offset) ->
+          | CreateSolidBrush color ->
+            d.ReserveBrush bid (SolidBrush (parseColor color))
+          | CreateLinearGradientBrush (startX, startY, endX, endY, extendMode) ->
+            d.ReserveBrush bid (LinearGradientBrush (v startX startY, v endX endY, parseExtendMode extendMode, [||]))
+          | CreateRadialGradientBrush (centerX, centerY, radiusX, radiusY, offsetX, offsetY, extendMode) ->
+            d.ReserveBrush bid (RadialGradientBrush (v centerX centerY, v radiusX radiusY, v offsetX offsetY, parseExtendMode extendMode, [||]))
+          | CreateGradientStopForBrush (color, offset) ->
+            let c = parseColor color
             let ogd = d.GetBrushDescriptor bid
             match ogd with
             | Some (LinearGradientBrush (s, e, em, stops)) ->
-              d.ReserveBrush bid (LinearGradientBrush (s, e, em, stops |> Array.append [|color, offset|]))
+              d.ReserveBrush bid (LinearGradientBrush (s, e, em, stops |> Array.append [|c, float32 offset|]))
             | Some (RadialGradientBrush (c, r, o, em, stops)) ->
-              d.ReserveBrush bid (RadialGradientBrush (c, r, o, em, stops |> Array.append [|color, offset|]))
+              d.ReserveBrush bid (RadialGradientBrush (c, r, o, em, stops |> Array.append [|c, float32 offset|]))
             | _ ->
               ()
         | TextFormatInput (tfid, (CreateTextFormat (fontFamily, fontSize))) ->
-          d.ReserveTextFormat tfid (SimpleTextFormat (fontFamily, fontSize))
+          let tfid = createTextFormatId tfid
+          d.ReserveTextFormat tfid (SimpleTextFormat (fontFamily, float32 fontSize))
         | VisualInput (vid, vi) ->
+          let vid = createVisualId vid
           ignore <| visuals.CreateOrUpdate vid vi createVisual updateVisual
 
       onRefresh ()
@@ -207,7 +213,7 @@ module internal SceneRenderer =
 
     let uiProc () =
       try
-        Window.show "FunBasic Direct2D" 1024 768 doNothing onRender
+        Window.show "FunBasic Direct2D" 1024 768 onKeyUp onRender
       with
       | e -> 
         traceException e
@@ -249,3 +255,9 @@ type Scene() =
 
   member x.SendInput (input : Input) : unit =
     renderQueue.Enqueue input
+
+  interface IDisposable with
+    member x.Dispose () =
+      renderQueue.Enqueue <| GlobalInput CloseWindow  // Kills thread
+      renderThread.Join ()
+      dispose refreshLock

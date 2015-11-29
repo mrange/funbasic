@@ -14,13 +14,15 @@
   {
     var prefix = g.Key;
 #>
-    type <#=g.Key.Name#> =
+  // Prefix: <#=prefix.Name#>
+  type <#=prefix.Name#> =
 <#
   foreach (var md in g.OrderBy (md => md.Verb).ThenBy (md => md.Noun))
   {
+    var pds = md.ToArray ();
 #>
-    // Method: <#=md.Verb#><#=md.Noun#>
-    | <#=LeftJustify (md.Verb + md.Noun, 20)#> of <#=ToTypeTuple (md.ToArray ())#>
+  // Method: <#=md.Verb#><#=md.Noun#> <#=ToTypeTupleNames (pds)#>
+  | <#=LeftJustify (md.Verb + md.Noun, 20)#> <#=ToTypeTuple (pds)#>
 <#
   }
 #>
@@ -29,14 +31,15 @@
   }
 #>
 
-    type Input =
+  type Input =
 <#
   foreach (var g in grouped)
   {
     var prefix = g.Key;
-    var ps = prefix.PrependWith.Concat (new [] {PD (prefix.Name, "payload")}).ToArray ();
+    var pds = prefix.PrependWith.Concat (new [] {PD (prefix.Name, "payload")}).ToArray ();
 #>
-    | <#=LeftJustify (prefix.Name, 20)#> of <#=ToTypeTuple (ps)#>
+  // Prefix: <#=prefix.Name#> <#=ToTypeTupleNames (pds)#>
+  | <#=LeftJustify (prefix.Name, 20)#> <#=ToTypeTuple (pds)#>
 <#
   }
 #>
@@ -46,12 +49,12 @@
   {
     if (parameters.Length == 0)
     {
-      return "unit";
+      return "";
     }
     else
     {
       var types = parameters.Select (p => p.Name + ":" + p.Type).ToArray ();
-      return string.Join ("*", types);
+      return "of " + string.Join ("*", types);
     }
   }
 #>
