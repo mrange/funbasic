@@ -45,7 +45,7 @@
       Verb    = verb    ?? S_NoName   ;
       Noun    = noun    ?? S_NoName   ;
     }
- 
+
     public readonly Prefix  Prefix  ;
     public readonly string  Verb    ;
     public readonly string  Noun    ;
@@ -68,7 +68,7 @@
         PD ("byte[]"  , "bits"    ),
       },
 
-      new MethodDescriptor  (GlobalInput      , "Set"     , "Background"          ) 
+      new MethodDescriptor  (GlobalInput      , "Set"     , "Background"          )
       {
         PD ("string", "color"),
       },

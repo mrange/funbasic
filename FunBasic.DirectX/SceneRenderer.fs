@@ -54,10 +54,10 @@ let rec renderVisual (v : Visual) (d : Device) (rt : Direct2D1.RenderTarget) : u
     if fb.IsVisible && tfd <> null then
       rt.DrawText (t, tfd, r, fb)
 
-let onKeyUp _ = 
+let onKeyUp _ =
   ()
 
-let regexExtendMode = 
+let regexExtendMode =
   Regex ( @"^\s*((?<Clamp>clamp)|(?<Mirror>mirror)|(?<Wrap>wrap))\s*$"
         , RegexOptions.IgnoreCase ||| RegexOptions.Compiled ||| RegexOptions.CultureInvariant
         )
@@ -84,24 +84,24 @@ let createRenderer (onRefresh :  unit -> unit) =
 
   let inline ecreate (x : float) (y : float) (w : float) (h : float) : Direct2D1.Ellipse =
     Direct2D1.Ellipse (v2 (float32 x) (float32 y), float32 (w / 2.0), float32 (h / 2.0))
-  let inline rcreate (x : float) (y : float) (w : float) (h : float) : RectangleF = 
+  let inline rcreate (x : float) (y : float) (w : float) (h : float) : RectangleF =
     rectf (float32 (x - w / 2.0)) (float32 (y - h / 2.0)) (float32 w) (float32 h)
 
-  let inline rmove2 (x : float) (y : float) (r : RectangleF) = 
+  let inline rmove2 (x : float) (y : float) (r : RectangleF) =
     rectf (float32 x - r.Width / 2.0F) (float32 x - r.Height / 2.0F) r.Width r.Height
-  let inline rresize2 (w : float) (h : float) (r : RectangleF) = 
+  let inline rresize2 (w : float) (h : float) (r : RectangleF) =
     rectf r.X r.Y (float32 w) (float32 h)
 
-  let inline emove2 (x : float) (y : float) (e : Direct2D1.Ellipse) = 
+  let inline emove2 (x : float) (y : float) (e : Direct2D1.Ellipse) =
     ellipsef (float32 x) (float32 y) e.RadiusX e.RadiusY
-  let inline eresize2 (w : float) (h : float) (e : Direct2D1.Ellipse) = 
+  let inline eresize2 (w : float) (h : float) (e : Direct2D1.Ellipse) =
     ellipsef e.Point.X e.Point.Y (float32 w / 2.0F) (float32 h / 2.0F)
 
   let input     = ConcurrentQueue<Input> ()
   let visuals   = Dictionary<VisualId, Visual> ()
   let background= ref <| Color.Black.ToColor4 ()
 
-  let createVisual k u = 
+  let createVisual k u =
     match u with
     | CloneVisual (cloneVisualId) ->
       let ok, visual = visuals.TryGetValue (createVisualId cloneVisualId)
@@ -124,11 +124,11 @@ let createRenderer (onRefresh :  unit -> unit) =
     | CreateTextVisual (fillBrushId, textFormatId, centerX, centerY, width, height, text) ->
       TextVisual (createBrushId fillBrushId, createTextFormatId textFormatId, rcreate centerX centerY width height, text)
 
-  let updateVisual k v u = 
+  let updateVisual k v u =
     match u with
     | MoveVisual (x, y) ->
       match v with
-      | EmptyVisual -> 
+      | EmptyVisual ->
         EmptyVisual
       | BitmapVisual  (bid, o, bim, r) ->
         BitmapVisual  (bid, o, bim, rmove2 x y r)
@@ -140,7 +140,7 @@ let createRenderer (onRefresh :  unit -> unit) =
         TextVisual (bd, tfd, rmove2 x y r, t)
     | ResizeVisual (w, h) ->
       match v with
-      | EmptyVisual -> 
+      | EmptyVisual ->
         EmptyVisual
       | BitmapVisual  (bid, o, bim, r) ->
         BitmapVisual  (bid, o, bim, rresize2 w h r)
@@ -157,7 +157,7 @@ let createRenderer (onRefresh :  unit -> unit) =
 
   let onRender (delay : (unit -> unit) -> unit) (d : Device) (rt : Direct2D1.RenderTarget) : bool =
     let mutable cont  = true
-    let mutable i     = doNothing 
+    let mutable i     = doNothing
     while input.TryDequeue (&i) do
       match i with
       | InternalInput ii ->
@@ -223,7 +223,7 @@ let createRenderer (onRefresh :  unit -> unit) =
     try
       Window.show "FunBasic Direct2D" 1024 768 onKeyUp onRender
     with
-    | e -> 
+    | e ->
       traceException e
 
   let uiThread =
@@ -232,6 +232,6 @@ let createRenderer (onRefresh :  unit -> unit) =
     t.Priority          <- ThreadPriority.AboveNormal
     t.IsBackground      <- true
     t.Start ()
-    t  
+    t
   uiThread, input
 

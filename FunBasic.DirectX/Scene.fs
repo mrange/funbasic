@@ -20,14 +20,14 @@ type Scene() =
 
   let hasLock_incrementDownloadCount () =
     downloadCount <- downloadCount + 1
-  
+
   let incrementDownloadCount () =
     lock downloadLock hasLock_incrementDownloadCount
 
   let hasLock_decrementDownloadCount () =
     downloadCount <- downloadCount - 1
     Monitor.Pulse downloadLock
-  
+
   let decrementDownloadCount () =
     lock downloadLock hasLock_decrementDownloadCount
 
@@ -48,7 +48,7 @@ type Scene() =
 
           renderQueue.Enqueue <| InternalInput (CreateBitmapFromBits (bitmapId, bits))
         with
-        | e -> 
+        | e ->
           traceException e
       finally
         decrementDownloadCount ()

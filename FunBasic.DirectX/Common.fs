@@ -27,14 +27,14 @@ let addToArray (v : 'T) (vs : 'T []) : 'T [] =
   nvs.[vs.Length] <- v
   nvs
 
-let traceException (e : #Exception) : unit = 
+let traceException (e : #Exception) : unit =
   printfn "EXCEPTION: %s" e.Message
 
 let tryWith (dv : 'T ) (a : unit -> 'T) : 'T =
   try
     a ()
   with
-  | e -> 
+  | e ->
     traceException e
     dv
 
@@ -106,7 +106,7 @@ type ActionDisposable(a : unit -> unit) =
       try
         a ()
       with
-      | e -> 
+      | e ->
         traceException e
 
 let onExit (a : unit -> unit) : IDisposable = upcast new ActionDisposable (a)
@@ -120,7 +120,7 @@ let parseColor (color : string) : Color4 =
   let red = Color.Red
 
   let parseColorChar(ch : char) : int =
-    if ch >= '0' && ch <= '9' then 
+    if ch >= '0' && ch <= '9' then
       int ch - int '0'
     else if ch >= 'A' && ch <= 'F' then
       int ch - int 'A' + 10
@@ -129,11 +129,11 @@ let parseColor (color : string) : Color4 =
     else
       -1
 
-  let inline extendColor (i : int) : int = 
+  let inline extendColor (i : int) : int =
     let i = 0xF &&& i
     (i <<< 4) ||| i
 
-  let inline mergeColor (u : int) (l : int) : int = 
+  let inline mergeColor (u : int) (l : int) : int =
     let u = 0xF &&& u
     let l = 0xF &&& l
     (u <<< 4) ||| l
@@ -141,11 +141,11 @@ let parseColor (color : string) : Color4 =
   let inline isOk i = i > -1
 
   let parse (color : string) : Color =
-    if color.Length = 0 || color.[0] <> '#' then 
+    if color.Length = 0 || color.[0] <> '#' then
       red
     else
       match color.Length with
-      | 4 -> 
+      | 4 ->
         // #rgb
         let r = parseColorChar color.[1]
         let g = parseColorChar color.[2]
@@ -154,7 +154,7 @@ let parseColor (color : string) : Color4 =
           Color(extendColor r, extendColor g, extendColor b)
         else
           red
-      | 5 -> 
+      | 5 ->
         // #argb
         let a = parseColorChar color.[1]
         let r = parseColorChar color.[2]

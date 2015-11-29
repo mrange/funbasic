@@ -90,7 +90,7 @@ let initLibrary () =
 
   let surface =
     { new ISurface with
-      member x.Width 
+      member x.Width
         with get () = 800.0
         and  set v  = ()
       member x.Height
@@ -99,7 +99,7 @@ let initLibrary () =
       member x.BackgroundColor
         with get () = "White"
         and  set v  = ()
-      member x.Clear () = 
+      member x.Clear () =
         ()
       member x.ShowMessage (content, title) =
         ()
@@ -125,20 +125,20 @@ let initLibrary () =
       member x.FontItalic
         with get () = false
         and  set v  = ()
-      member x.FontBold 
+      member x.FontBold
         with get () = false
         and  set v  = ()
     }
 
   let shapes =
     { new IShapes with
-      member x.AddText(text) = 
+      member x.AddText(text) =
         ""
-      member x.AddEllipse(width, height) = 
+      member x.AddEllipse(width, height) =
         ""
-      member x.AddLine(x1, y1, x2, y2) = 
+      member x.AddLine(x1, y1, x2, y2) =
         ""
-      member x.AddTriangle(x1, y1, x2, y2, x3, y3) = 
+      member x.AddTriangle(x1, y1, x2, y2, x3, y3) =
         ""
       member x.AddRectangle(width, height) =
         ""
@@ -174,7 +174,7 @@ let initLibrary () =
     let timerEvent  = Event<EventHandler> ()
     let d = timerEvent.Publish
     { new ITimer with
-      member x.Interval 
+      member x.Interval
         with get () = 100
         and  set v  = ()
       member x.add_Tick handler =
@@ -189,8 +189,8 @@ let initLibrary () =
 
   let keyboard =
     { new IKeyboard with
-      member x.LastKey 
-        with get () = 
+      member x.LastKey
+        with get () =
           if Console.KeyAvailable then
             let k = Console.ReadKey()
             k.KeyChar.ToString ()
@@ -213,26 +213,26 @@ let initLibrary () =
 
   cts
 
-let toDictionary (vs : seq<'TKey*'TValue>) : Dictionary<'TKey, 'TValue> = 
+let toDictionary (vs : seq<'TKey*'TValue>) : Dictionary<'TKey, 'TValue> =
   let d = Dictionary<_, _> ()
   for (k,v) in vs do
     d.[k] <- v
   d
-    
-let namespaces = 
+
+let namespaces =
   typeof<_Library>.Assembly.DefinedTypes
   |> Seq.filter (fun t -> t.IsAbstract && t.IsSealed) // Static class
-  |> Seq.map (fun t -> 
-    let methods = 
+  |> Seq.map (fun t ->
+    let methods =
       t.DeclaredMethods
       |> Seq.filter (fun m -> m.IsStatic && m.IsPublic)
       |> Seq.toArray
-    let getProperties = 
+    let getProperties =
       t.DeclaredProperties
       |> Seq.map (fun p -> p,p.GetMethod)
       |> Seq.filter (fun (_,m) -> m <> null && (m.GetParameters ()).Length = 0)
       |> Seq.toArray
-    let setProperties = 
+    let setProperties =
       t.DeclaredProperties
       |> Seq.map (fun p -> p,p.SetMethod)
       |> Seq.filter (fun (_,m) -> m <> null && (m.GetParameters ()).Length = 1)
@@ -241,20 +241,20 @@ let namespaces =
     )
   |> Array.ofSeq
 
-let methods = 
-  namespaces 
+let methods =
+  namespaces
   |> Seq.collect (fun (_, methods,_ , _) -> methods)
   |> Seq.map (fun m -> (m.DeclaringType.Name, m.Name), m)
   |> toDictionary
 
-let getters = 
-  namespaces 
+let getters =
+  namespaces
   |> Seq.collect (fun (_, _,getters , _) -> getters)
   |> Seq.map (fun (p, m) -> (p.DeclaringType.Name, p.Name), m)
   |> toDictionary
 
-let setters = 
-  namespaces 
+let setters =
+  namespaces
   |> Seq.collect (fun (_, _, _, setters) -> setters)
   |> Seq.map (fun (p, m) -> (p.DeclaringType.Name, p.Name), m)
   |> toDictionary
@@ -270,15 +270,15 @@ let converters =
     typeof<bool>  , (box false , converter Convert.ToBoolean  )
   |] |> toDictionary
 
-let convertArg (ty : Type) (arg : obj) : obj = 
-  let inline isEmpty (o : obj) = 
+let convertArg (ty : Type) (arg : obj) : obj =
+  let inline isEmpty (o : obj) =
     match o with
     | :? string as s -> s.Length = 0
     | _ -> false
   let ok,v = converters.TryGetValue ty
   if ok then
     let dv,converter = v
-    let isEmpty = 
+    let isEmpty =
       match arg with
       | :? string as s -> s.Length = 0
       | _ -> false
@@ -290,17 +290,17 @@ let convertArg (ty : Type) (arg : obj) : obj =
 let invokeMethod (m : MethodInfo) (values : obj []) : obj =
   let parameters = m.GetParameters ()
   if parameters.Length = values.Length then
-    let cvalues = 
+    let cvalues =
       [|
         for i = 0 to values.Length - 1 do
           yield convertArg parameters.[i].ParameterType values.[i]
       |]
     m.Invoke (null, cvalues)
   else
-    failwithf 
-      "Method arguments don't match, expected: %d, found: %d: %s.%s" 
-        parameters.Length 
-        values.Length 
+    failwithf
+      "Method arguments don't match, expected: %d, found: %d: %s.%s"
+        parameters.Length
+        values.Length
         m.DeclaringType.Name
         m.Name
 
@@ -316,28 +316,28 @@ let main argv =
 
     let ffi =
       { new IFFI with
-        member x.MethodInvoke (ns, name, values)  = 
+        member x.MethodInvoke (ns, name, values)  =
           let k     = ns, name
           let ok, m = methods.TryGetValue k
           if ok then
             invokeMethod m values
           else
             failwithf "Method not found: %s.%s" ns name
-        member x.PropertyGet  (ns, name)         = 
+        member x.PropertyGet  (ns, name)         =
           let k     = ns, name
           let ok, m = getters.TryGetValue k
           if ok then
             invokeMethod m [||]
           else
             failwithf "Property (Get) not found: %s.%s" ns name
-        member x.PropertySet  (ns, name, value)  = 
+        member x.PropertySet  (ns, name, value)  =
           let k     = ns, name
           let ok, m = setters.TryGetValue k
           if ok then
             ignore <| invokeMethod m [|value|]
           else
             failwithf "Property (Set) not found: %s.%s" ns name
-        member x.EventAdd     (ns, name, handler)= 
+        member x.EventAdd     (ns, name, handler)=
           printfn "EventAdd: %s.%s - %A" ns name handler
           ()
       }
@@ -346,6 +346,6 @@ let main argv =
     Run (code, ffi, ict)
     0
   with
-  | e -> 
+  | e ->
     errorf "Exception: %s" e.Message
     999

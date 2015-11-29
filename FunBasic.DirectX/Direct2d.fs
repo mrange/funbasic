@@ -47,13 +47,13 @@ type BitmapSource ( stream : Stream
       dispose decoder
       dispose stream
 
-type DeviceIndependentResources() = 
+type DeviceIndependentResources() =
   let imagingFactory  = new WIC.ImagingFactory ()
 
   let bitmaps         = Dictionary<BitmapId, BitmapDescriptor*BitmapSource> ()
 
-  let createBitmap (bid : BitmapId) (bd : BitmapDescriptor) : BitmapSource = 
-    match bd with 
+  let createBitmap (bid : BitmapId) (bd : BitmapDescriptor) : BitmapSource =
+    match bd with
     | BitmapBits bytes ->
       try
         let ms    = new MemoryStream (bytes)
@@ -67,8 +67,8 @@ type DeviceIndependentResources() =
           bs
         else
           null
-      with 
-      | e -> 
+      with
+      | e ->
         traceException e
         null
 
@@ -77,7 +77,7 @@ type DeviceIndependentResources() =
 
   member x.GetBitmap (bid : BitmapId) : BitmapSource =
     getResource bid null createBitmap bitmaps
-  
+
   interface IDisposable with
     member x.Dispose () =
       disposeResourceDictionary bitmaps
@@ -124,7 +124,7 @@ type Device (dir : DeviceIndependentResources, form : Windows.RenderForm) =
       Direct3D.DriverType.Hardware                ,
       Direct3D11.DeviceCreationFlags.BgraSupport  ,
       featureLevels                               ,
-      desc                                        
+      desc
       )
 
   let width               = float32 form.ClientSize.Width
@@ -163,32 +163,32 @@ type Device (dir : DeviceIndependentResources, form : Windows.RenderForm) =
     disposeResourceDictionary brushes
     disposeResourceDictionary bitmaps
 
-  let gradientStop (c : Color4) (p : float32) : Direct2D1.GradientStop = 
+  let gradientStop (c : Color4) (p : float32) : Direct2D1.GradientStop =
     let mutable gs = Direct2D1.GradientStop ()
     gs.Color    <- c
     gs.Position <- p
     gs
 
-  let gradientStopCollection (em : Direct2D1.ExtendMode) (stops : (Color4*float32) []) : Direct2D1.GradientStopCollection = 
+  let gradientStopCollection (em : Direct2D1.ExtendMode) (stops : (Color4*float32) []) : Direct2D1.GradientStopCollection =
     let gstops  = stops |> Array.map (fun (c,p) -> gradientStop c p)
     new Direct2D1.GradientStopCollection (d2dRenderTarget, gstops, em)
 
   let createBrush (bid : BrushId) (bd : BrushDescriptor) : Direct2D1.Brush =
     match bd with
-    | Transparent                             -> 
+    | Transparent                             ->
       null
-    | SolidBrush c                            -> 
+    | SolidBrush c                            ->
       upcast new Direct2D1.SolidColorBrush (d2dRenderTarget, c)
     | LinearGradientBrush (_, _, _, stops)
     | RadialGradientBrush (_, _, _, _, stops) when stops.Length = 0 ->
       null
-    | LinearGradientBrush (sp, ep, em, stops) -> 
+    | LinearGradientBrush (sp, ep, em, stops) ->
       let mutable props = Direct2D1.LinearGradientBrushProperties ()
       props.StartPoint  <- sp
       props.EndPoint    <- ep
       use gcoll         = gradientStopCollection em stops
       upcast new Direct2D1.LinearGradientBrush (d2dRenderTarget, props, gcoll)
-    | RadialGradientBrush (c, r, o, em, stops) -> 
+    | RadialGradientBrush (c, r, o, em, stops) ->
       let mutable props           = Direct2D1.RadialGradientBrushProperties ()
       props.Center                <- c
       props.RadiusX               <- r.X
@@ -207,7 +207,7 @@ type Device (dir : DeviceIndependentResources, form : Windows.RenderForm) =
       else
         null
     with
-    | e -> 
+    | e ->
       traceException e
       null
 
@@ -335,7 +335,7 @@ module Window =
 
     use onExitRemoveHandler = onExit <| fun () -> form.Resize.RemoveHandler resizer
 
-    let delay (a : unit -> unit) : unit = 
+    let delay (a : unit -> unit) : unit =
       SynchronizationContext.Current.Post (SendOrPostCallback (fun _ -> a ()), null)
 
     let render () =
