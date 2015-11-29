@@ -21,13 +21,20 @@
   class Prefix
   {
     public Prefix (string name, ParameterDescriptor[] prependWith)
+      : this (false, name, prependWith)
     {
+    }
+
+    public Prefix (bool isInternal, string name, ParameterDescriptor[] prependWith)
+    {
+      IsInternal  = isInternal;
       Name        = (name       ?? S_NoName) + "Input";
       PrependWith = prependWith ?? new ParameterDescriptor[0];
     }
 
-    public readonly string                Name;
-    public readonly ParameterDescriptor[] PrependWith;
+    public readonly bool                  IsInternal  ;
+    public readonly string                Name        ;
+    public readonly ParameterDescriptor[] PrependWith ;
   }
 
   class MethodDescriptor : BaseContainer<Root, ParameterDescriptor>
@@ -44,27 +51,34 @@
     public readonly string  Noun    ;
   }
 
-  static readonly Prefix GlobalInput      = new Prefix ("Global"     , new ParameterDescriptor[] {}        );
-  static readonly Prefix BitmapInput      = new Prefix ("Bitmap"     , new [] { PD ("int", "bitmapId")     });
-  static readonly Prefix BrushInput       = new Prefix ("Brush"      , new [] { PD ("int", "brushId")      });
-  static readonly Prefix VisualInput      = new Prefix ("Visual"     , new [] { PD ("int", "visualId")     });
-  static readonly Prefix TextFormatInput  = new Prefix ("TextFormat" , new [] { PD ("int", "textFormatId") });
+  static readonly Prefix InternalInput    = new Prefix (true, "Internal"  , new ParameterDescriptor[] {}        );
+  static readonly Prefix GlobalInput      = new Prefix ("Global"          , new ParameterDescriptor[] {}        );
+  static readonly Prefix BitmapInput      = new Prefix ("Bitmap"          , new [] { PD ("int", "bitmapId")     });
+  static readonly Prefix BrushInput       = new Prefix ("Brush"           , new [] { PD ("int", "brushId")      });
+  static readonly Prefix VisualInput      = new Prefix ("Visual"          , new [] { PD ("int", "visualId")     });
+  static readonly Prefix TextFormatInput  = new Prefix ("TextFormat"      , new [] { PD ("int", "textFormatId") });
 
   static readonly MethodDescriptor[] model = new MethodDescriptor []
     {
+      new MethodDescriptor  (InternalInput    , "Do"      , "Nothing"             ) ,
+      new MethodDescriptor  (InternalInput    , "Discard" , "Window"              ) ,
+      new MethodDescriptor  (InternalInput    , "Create"  , "BitmapFromBits"      )
+      {
+        PD ("int"     , "bitmapId"),
+        PD ("byte[]"  , "bits"    ),
+      },
+
       new MethodDescriptor  (GlobalInput      , "Set"     , "Background"          ) 
       {
         PD ("string", "color"),
       },
       new MethodDescriptor  (GlobalInput      , "Clear"   , "Visuals"             ) ,
-      new MethodDescriptor  (GlobalInput      , "Close"   , "Window"              ) ,
-      new MethodDescriptor  (GlobalInput      , "Do"      , "Nothing"             ) ,
       new MethodDescriptor  (GlobalInput      , "Hide"    , "Window"              ) ,
       new MethodDescriptor  (GlobalInput      , "Show"    , "Window"              ) ,
 
       new MethodDescriptor  (BitmapInput      , "Download", "Bitmap"              )
       {
-        PD ("string", "url"),
+        PD ("string", "uri"),
       },
 
       new MethodDescriptor  (BrushInput       , "Create"  , "SolidBrush"          )
@@ -101,6 +115,10 @@
         PD ("double", "fontSize"  ),
       },
 
+      new MethodDescriptor  (VisualInput      , "Clone"   , "Visual"              )
+      {
+        PD ("int"   , "cloneVisualId" ),
+      },
       new MethodDescriptor  (VisualInput      , "Move"    , "Visual"              )
       {
         PD ("double", "x"),

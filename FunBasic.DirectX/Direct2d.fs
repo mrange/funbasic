@@ -48,7 +48,6 @@ type BitmapSource ( stream : Stream
       dispose stream
 
 type DeviceIndependentResources() = 
-
   let imagingFactory  = new WIC.ImagingFactory ()
 
   let bitmaps         = Dictionary<BitmapId, BitmapDescriptor*BitmapSource> ()
@@ -57,7 +56,6 @@ type DeviceIndependentResources() =
     match bd with 
     | BitmapBits bytes ->
       try
-        // TODO:
         let ms    = new MemoryStream (bytes)
         let dec   = new WIC.BitmapDecoder (imagingFactory, ms, WIC.DecodeOptions.CacheOnLoad)
         let fc    = dec.FrameCount
@@ -191,12 +189,12 @@ type Device (dir : DeviceIndependentResources, form : Windows.RenderForm) =
       use gcoll         = gradientStopCollection em stops
       upcast new Direct2D1.LinearGradientBrush (d2dRenderTarget, props, gcoll)
     | RadialGradientBrush (c, r, o, em, stops) -> 
-      let mutable props = Direct2D1.RadialGradientBrushProperties ()
-      props.Center              <- c
-      props.RadiusX             <- r.X
-      props.RadiusY             <- r.Y
-      props.GradientOriginOffset<- o
-      use gcoll         = gradientStopCollection em stops
+      let mutable props           = Direct2D1.RadialGradientBrushProperties ()
+      props.Center                <- c
+      props.RadiusX               <- r.X
+      props.RadiusY               <- r.Y
+      props.GradientOriginOffset  <- o
+      use gcoll                   = gradientStopCollection em stops
       upcast new Direct2D1.RadialGradientBrush (d2dRenderTarget, props, gcoll)
 
   let createBitmap (bid : BitmapId) (bd : BitmapDescriptor) : Direct2D1.Bitmap =
@@ -304,7 +302,6 @@ type Device (dir : DeviceIndependentResources, form : Windows.RenderForm) =
       dispose dwFactory
 
 module Window =
-
   let show
     (title      : string                                                              )
     (width      : int                                                                 )

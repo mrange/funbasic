@@ -12,9 +12,9 @@ open System.Reflection
 open System.Threading
 
 let code = """
-D2D.Show()
+D2D.ShowWindow ()
 
-D2D.Clear()
+D2D.ClearVisuals ()
 
 textFormat_std  = 0001
 
@@ -22,25 +22,35 @@ bitmap_ufo      = 0001
 
 brush_fill      = 0001
 brush_stroke    = 0002
+brush_radialfill= 0003
 
 visual_rect     = 0001
 visual_ellipse  = 0002
-visual_ufo      = 0003
-visual_text     = 0004
+visual_text     = 0003
+visual_ufo1     = 0004
+visual_ufo2     = 0005
+visual_ufo3     = 0006
 
-D2D.Background      ("#003")
+D2D.SetBackground               ("#003")
 
-D2D.TextFormat      (textFormat_std , "Tahoma", 24)
+D2D.DownloadBitmap              (bitmap_ufo       , "http://blitzetc.ru/images/5/5a/BMax-UFO.png")
 
-D2D.SolidBrush      (brush_fill     , "#0FF")
-D2D.SolidBrush      (brush_stroke   , "#00FF7f")
+D2D.CreateTextFormat            (textFormat_std   , "Tahoma", 24)
 
-D2D.DownloadBitmap  (bitmap_ufo     , "http://blitzetc.ru/images/5/5a/BMax-UFO.png")
+D2D.CreateSolidBrush            (brush_fill       , "#0FF")
+D2D.CreateSolidBrush            (brush_stroke     , "#00FF7f")
+D2D.CreateRadialGradientBrush   (brush_radialfill , 50, 50, 50, 50, 0, 0, "wrap")
+D2D.CreateGradientStopForBrush  (brush_radialfill , "#fff", 0)
+D2D.CreateGradientStopForBrush  (brush_radialfill , "#000", 1)
 
-D2D.Rectangle       (visual_rect    , brush_fill, brush_stroke, 3, 0, 0, 100, 100)
-D2D.Ellipse         (visual_ellipse , brush_fill, brush_stroke, 3, 200, 200, 80, 40)
-D2D.Bitmap          (visual_ufo     , bitmap_ufo, 1, 200, 300, 160, 128)
-D2D.Text            (visual_text    , textFormat_std , 1, 200, 400, 200, 100, "Direct2D + FunBasic")
+D2D.WaitForDownloadsToComplete  ()
+
+D2D.CreateRectangleVisual       (visual_rect    , brush_fill, brush_stroke, 3, 0, 0, 100, 100)
+D2D.CreateEllipseVisual         (visual_ellipse , brush_radialfill, brush_stroke, 3, 200, 200, 100, 100)
+D2D.CreateTextVisual            (visual_text    , textFormat_std , 1, 200, 400, 200, 100, "Direct2D + FunBasic")
+D2D.CreateBitmapVisual          (visual_ufo1    , bitmap_ufo, 1, 200, 300, 160, 128)
+D2D.CreateBitmapVisual          (visual_ufo2    , bitmap_ufo, 0.75, 400, 300, 160, 128)
+D2D.CreateBitmapVisual          (visual_ufo3    , bitmap_ufo, 0.5, 600, 300, 160, 128)
 
 x = 0
 y = 0
@@ -49,12 +59,12 @@ While D2D.LastKey = ""
   x = x + 2
   y = y + 1
 
-  D2D.Move(visual_rect, x, y)
+  D2D.MoveVisual (visual_rect, x, y)
 
-  D2D.WaitForRefresh()
+  D2D.WaitForRefresh ()
 EndWhile
 
-D2D.Discard ()
+D2D.CloseWindow ()
 
 """
 

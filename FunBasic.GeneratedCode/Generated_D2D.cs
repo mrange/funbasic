@@ -14,17 +14,17 @@ namespace FunBasic.Library
     // Prefix: BitmapInput
     // ------------------------------------------------------------------------
 
-    // Method: DownloadBitmap (bitmapId, url)
+    // Method: DownloadBitmap (bitmapId, uri)
     public static void DownloadBitmap (
         int        bitmapId
-      , string     url
+      , string     uri
       )
     {
       Scene.SendInput (
         Input.NewBitmapInput (
             bitmapId
           , BitmapInput.NewDownloadBitmap (
-              url
+              uri
             )
           )
         );
@@ -135,28 +135,6 @@ namespace FunBasic.Library
         );
     }
 
-    // Method: CloseWindow 
-    public static void CloseWindow (
-      )
-    {
-      Scene.SendInput (
-        Input.NewGlobalInput (
-            GlobalInput.CloseWindow
-          )
-        );
-    }
-
-    // Method: DoNothing 
-    public static void DoNothing (
-      )
-    {
-      Scene.SendInput (
-        Input.NewGlobalInput (
-            GlobalInput.DoNothing
-          )
-        );
-    }
-
     // Method: HideWindow 
     public static void HideWindow (
       )
@@ -218,6 +196,22 @@ namespace FunBasic.Library
     // ------------------------------------------------------------------------
     // Prefix: VisualInput
     // ------------------------------------------------------------------------
+
+    // Method: CloneVisual (visualId, cloneVisualId)
+    public static void CloneVisual (
+        int        visualId
+      , int        cloneVisualId
+      )
+    {
+      Scene.SendInput (
+        Input.NewVisualInput (
+            visualId
+          , VisualInput.NewCloneVisual (
+              cloneVisualId
+            )
+          )
+        );
+    }
 
     // Method: CreateBitmapVisual (visualId, bitmapId, opacity, centerX, centerY, width, height)
     public static void CreateBitmapVisual (

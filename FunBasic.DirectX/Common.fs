@@ -21,6 +21,12 @@ type VisualId     = int<VisualMeasure>
 
 let inline refEqual (l : 'T) (r : 'T) : bool = Object.ReferenceEquals (l, r)
 
+let addToArray (v : 'T) (vs : 'T []) : 'T [] =
+  let mutable nvs = vs
+  System.Array.Resize (&nvs, vs.Length + 1)
+  nvs.[vs.Length] <- v
+  nvs
+
 let traceException (e : #Exception) : unit = 
   printfn "EXCEPTION: %s" e.Message
 
@@ -39,6 +45,18 @@ let dispose (d : IDisposable) =
     with
     | e ->
       traceException e
+
+let createOrUpdate (k : 'K) (u : 'U) (creator : 'K -> 'U -> 'V) (updater : 'K -> 'V -> 'U -> 'V) (d : IDictionary<'K, 'V>): 'V =
+  let ok, v = d.TryGetValue k
+  if ok then
+    let nv = updater k v u
+    if not <| refEqual nv v then
+      d.[k] <- nv
+    nv
+  else
+    let nv = creator k u
+    d.[k] <- nv
+    nv
 
 let disposeResourceDictionary (d : IDictionary<_, _*#IDisposable>) : unit =
   try
@@ -177,7 +195,6 @@ let parseColor (color : string) : Color4 =
 
   let c = parse (color.Trim ())
   c.ToColor4 ()
-    
 
 type Direct2D1.Brush with
   member x.IsVisible =
@@ -185,26 +202,3 @@ type Direct2D1.Brush with
       false
     else
       x.Opacity > 0.0f
-
-type IDictionary<'K,'V> with
-  member inline x.GetOrCreate (k : 'K) (u : 'U) (creator : 'K -> 'U -> 'V) : 'V =
-    let ok, v = x.TryGetValue k
-    if ok then
-      v
-    else
-      let nv = creator k u
-      x.Add (k, nv)
-      nv
-
-  member inline x.CreateOrUpdate (k : 'K) (u : 'U) (creator : 'K -> 'U -> 'V) (updater : 'K -> 'V -> 'U -> 'V) : 'V =
-    let ok, v = x.TryGetValue k
-    if ok then
-      let nv = updater k v u
-      if not <| refEqual nv v then
-        x.[k] <- nv
-      nv
-    else
-      let nv = creator k u
-      x.[k] <- nv
-      nv
-

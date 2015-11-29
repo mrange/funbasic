@@ -7,8 +7,8 @@
 
   // Prefix: BitmapInput
   type BitmapInput =
-  // Method: DownloadBitmap (url)
-  | DownloadBitmap       of url:string
+  // Method: DownloadBitmap (uri)
+  | DownloadBitmap       of uri:string
 
   // Prefix: BrushInput
   type BrushInput =
@@ -25,16 +25,21 @@
   type GlobalInput =
   // Method: ClearVisuals 
   | ClearVisuals         
-  // Method: CloseWindow 
-  | CloseWindow          
-  // Method: DoNothing 
-  | DoNothing            
   // Method: HideWindow 
   | HideWindow           
   // Method: SetBackground (color)
   | SetBackground        of color:string
   // Method: ShowWindow 
   | ShowWindow           
+
+  // Prefix: InternalInput
+  type InternalInput =
+  // Method: CreateBitmapFromBits (bitmapId, bits)
+  | CreateBitmapFromBits of bitmapId:int*bits:byte[]
+  // Method: DiscardWindow 
+  | DiscardWindow        
+  // Method: DoNothing 
+  | DoNothing            
 
   // Prefix: TextFormatInput
   type TextFormatInput =
@@ -43,6 +48,8 @@
 
   // Prefix: VisualInput
   type VisualInput =
+  // Method: CloneVisual (cloneVisualId)
+  | CloneVisual          of cloneVisualId:int
   // Method: CreateBitmapVisual (bitmapId, opacity, centerX, centerY, width, height)
   | CreateBitmapVisual   of bitmapId:int*opacity:double*centerX:double*centerY:double*width:double*height:double
   // Method: CreateEllipseVisual (fillBrushId, strokeBrushId, strokeWidth, centerX, centerY, width, height)
@@ -64,6 +71,8 @@
   | BrushInput           of brushId:int*payload:BrushInput
   // Prefix: GlobalInput (payload)
   | GlobalInput          of payload:GlobalInput
+  // Prefix: InternalInput (payload)
+  | InternalInput        of payload:InternalInput
   // Prefix: TextFormatInput (textFormatId, payload)
   | TextFormatInput      of textFormatId:int*payload:TextFormatInput
   // Prefix: VisualInput (visualId, payload)

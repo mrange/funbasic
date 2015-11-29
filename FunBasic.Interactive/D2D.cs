@@ -35,13 +35,23 @@ namespace FunBasic.Library
       keyboard = kb;
     }
 
-    public static void Discard ()
+    public static void DiscardWindow ()
     {
       if (scene != null)
       {
         DisposeIt (scene);
         scene = null;
       }
+    }
+
+    public static void WaitForDownloadsToComplete ()
+    {
+      Scene.WaitForDownloadsToComplete ();
+    }
+
+    public static void WaitForRefresh ()
+    {
+      Scene.WaitForRefresh ();
     }
 
     public static string LastKey

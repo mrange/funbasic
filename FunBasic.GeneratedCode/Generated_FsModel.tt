@@ -13,6 +13,7 @@
   foreach (var g in grouped)
   {
     var prefix = g.Key;
+
 #>
   // Prefix: <#=prefix.Name#>
   type <#=prefix.Name#> =

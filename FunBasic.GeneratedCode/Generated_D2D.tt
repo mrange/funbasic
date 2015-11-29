@@ -17,7 +17,13 @@ namespace FunBasic.Library
 
   foreach (var g in grouped)
   {
-  var prefix = g.Key;
+    var prefix = g.Key;
+
+    if (prefix.IsInternal)
+    {
+      continue;
+    }
+
 #>
     // ------------------------------------------------------------------------
     // Prefix: <#=prefix.Name#>

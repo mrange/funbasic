@@ -1478,6 +1478,7 @@ namespace FunBasic.Library
          Flickr.Init(flickr);
          Speech.Init(speech);
          Program.Init(token);
+         D2D.Init(keyboard);
       }
 
       public static IDictionary<string, Tuple<string,string>[]> GetMemberLookup()
@@ -1521,7 +1522,7 @@ namespace Include
     static partial class MetaData
     {
         public const string RootPath        = @"C:\temp\GitHub\funbasic\FunBasic.Interactive\..\FunBasic.Library";
-        public const string IncludeDate     = @"2015-11-29T12:53:31";
+        public const string IncludeDate     = @"2015-11-29T23:32:12";
 
         public const string Include_0       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IFlickr.cs";
         public const string Include_1       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ISpeech.cs";
