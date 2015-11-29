@@ -6,30 +6,74 @@ open System.Collections.Generic
 open SharpDX
 
 [<Measure>]
-type VisualMeasure
+type BitmapMeasure
 [<Measure>]
 type BrushMeasure
 [<Measure>]
 type TextFormatMeasure
+[<Measure>]
+type VisualMeasure
 
-type VisualId     = int<VisualMeasure>
+type BitmapId     = int<BitmapMeasure>
 type BrushId      = int<BrushMeasure>
 type TextFormatId = int<TextFormatMeasure>
+type VisualId     = int<VisualMeasure>
 
-let inline visualId i     = i*1<VisualMeasure>
+let inline bitmapId i     = i*1<BitmapMeasure>
 let inline brushId i      = i*1<BrushMeasure>
 let inline textFormatId i = i*1<TextFormatMeasure>
+let inline visualId i     = i*1<VisualMeasure>
 
+(*
 let invalidVisualId       = visualId -1
 let invalidBrushId        = brushId -1
 let invalidTextFormatId   = textFormatId -1
+*)
+
+let traceException (e : #Exception) : unit = 
+  printfn "EXCEPTION: %s" e.Message
+
+let tryWith (dv : 'T ) (a : unit -> 'T) : 'T =
+  try
+    a ()
+  with
+  | e -> 
+    traceException e
+    dv
 
 let dispose (d : IDisposable) =
   if d <> null then
     try
       d.Dispose ()
     with
-    | e -> () // TODO: Trace
+    | e ->
+      traceException e
+
+
+let disposeResourceDictionary (d : IDictionary<_, _*#IDisposable>) : unit =
+  try
+    for kv in d do
+      dispose (snd kv.Value)
+  finally
+      d.Clear ()
+
+let inline findResource (k : 'K) (dv : 'V) (d : Dictionary<'K, 'U*'V>) : 'V =
+  let ok, uv = d.TryGetValue k
+  if ok then
+    snd uv
+  else
+    dv
+
+let makeResourceUpdater (creator : 'K -> 'U -> 'U*'V ) : 'K  -> 'U*'V -> 'U -> 'U*'V =
+  fun k uv u ->
+    let pu, v = uv
+    if Object.ReferenceEquals (u, v) then 
+      uv
+    else
+      let nv = creator k u
+      dispose v
+      nv
+
 
 type ActionDisposable(a : unit -> unit) =
   interface IDisposable with
@@ -37,8 +81,8 @@ type ActionDisposable(a : unit -> unit) =
       try
         a ()
       with
-      | e -> () // TODO: Trace
-
+      | e -> 
+        traceException e
 
 let onExit (a : unit -> unit) : IDisposable = upcast new ActionDisposable (a)
 

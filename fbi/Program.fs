@@ -16,17 +16,31 @@ D2D.Show()
 
 D2D.Clear()
 
+textFormat_std  = 0001
+
+bitmap_ufo      = 0001
+
 brush_fill      = 0001
 brush_stroke    = 0002
 
 visual_rect     = 0001
 visual_ellipse  = 0002
+visual_ufo      = 0003
+visual_text     = 0004
 
-D2D.SolidBrush  (brush_fill  , "#0FF")
-D2D.SolidBrush  (brush_stroke, "#00FF7f")
+D2D.Background      ("#003")
 
-D2D.Rectangle   (visual_rect, brush_fill, brush_stroke, 3, 0, 0, 100, 100)
-D2D.Ellipse     (visual_ellipse, brush_fill, brush_stroke, 3, 200, 200, 20, 20)
+D2D.TextFormat      (textFormat_std , "Tahoma", 24)
+
+D2D.SolidBrush      (brush_fill     , "#0FF")
+D2D.SolidBrush      (brush_stroke   , "#00FF7f")
+
+D2D.DownloadBitmap  (bitmap_ufo     , "http://blitzetc.ru/images/5/5a/BMax-UFO.png")
+
+D2D.Rectangle       (visual_rect    , brush_fill, brush_stroke, 3, 0, 0, 100, 100)
+D2D.Ellipse         (visual_ellipse , brush_fill, brush_stroke, 3, 200, 200, 20, 20)
+D2D.Bitmap          (visual_ufo     , bitmap_ufo, 1, 100, 300, 160, 128)
+D2D.Text            (visual_text    , textFormat_std , 1, 100, 400, 200, 100, "Direct2D + FunBasic")
 
 x = 0
 y = 0

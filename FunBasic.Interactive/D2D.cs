@@ -59,6 +59,11 @@ namespace FunBasic.Library
       Scene.Clear ();
     }
 
+    public static void DownloadBitmap (int bitmapId, string url)
+    {
+      Scene.DownloadBitmap (bitmapId, url);
+    }
+
     public static void WaitForRefresh ()
     {
       Scene.WaitForRefresh ();
@@ -66,7 +71,7 @@ namespace FunBasic.Library
 
     public static void Background (string color)
     {
-      Scene.Background (brushId, color);
+      Scene.Background (color);
     }
                                    
     public static void SolidBrush (int brushId, string color)
@@ -74,19 +79,34 @@ namespace FunBasic.Library
       Scene.SolidBrush (brushId, color);
     }
 
+    public static void TextFormat (int textFormatId, string fontFamily, double fontSize)
+    {
+      Scene.TextFormat (textFormatId, fontFamily, fontSize);
+    }
+
     public static void Move (int visualId, double x, double y)
     {
       Scene.Move (visualId, x, y);
     }
 
-    public static void Rectangle (int visualId, int fillBrush, int strokeBrush, double strokeWidth, double x, double y, double w, double h)
+    public static void Bitmap (int visualId, int bitmapId, double opacity, double left, double top, double width, double height)
     {
-      Scene.Rectangle (visualId, fillBrush, strokeBrush, strokeWidth, x, y, w, h);
+      Scene.Bitmap (visualId, bitmapId, opacity, left, top, width, height);
     }
 
-    public static void Ellipse (int visualId, int fillBrush, int strokeBrush, double strokeWidth, double x, double y, double w, double h)
+    public static void Rectangle (int visualId, int fillBrushId, int strokeBrushId, double strokeWidth, double left, double top, double width, double height)
     {
-      Scene.Ellipse (visualId, fillBrush, strokeBrush, strokeWidth, x, y, w, h);
+      Scene.Rectangle (visualId, fillBrushId, strokeBrushId, strokeWidth, left, top, width, height);
+    }
+
+    public static void Ellipse (int visualId, int fillBrushId, int strokeBrushId, double strokeWidth, double centerX, double centerY, double radiusX, double radiusY)
+    {
+      Scene.Ellipse (visualId, fillBrushId, strokeBrushId, strokeWidth, centerX, centerY, radiusX, radiusY);
+    }
+
+    public static void Text (int visualId, int fillBrushId, int textFormatId, double left, double top, double width, double height, string text)
+    {
+      Scene.Text (visualId, fillBrushId, textFormatId, left, top, width, height, text);
     }
 
     public static string LastKey

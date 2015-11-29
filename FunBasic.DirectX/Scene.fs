@@ -16,6 +16,7 @@ module internal SceneRenderer =
 
   type Visual =
     | EmptyVisual
+    | BitmapVisual    of BitmapId*float32*Direct2D1.BitmapInterpolationMode*RectangleF
     | EllipseVisual   of float32*BrushId*BrushId*Direct2D1.Ellipse
     | RectangleVisual of float32*BrushId*BrushId*RectangleF
     | TextVisual      of BrushId*TextFormatId*RectangleF*string
@@ -23,6 +24,7 @@ module internal SceneRenderer =
   type VisualInput =
     | MoveVisual      of float32*float32
     | ResizeVisual    of float32*float32
+    | CreateBitmap    of BitmapId*float32*Direct2D1.BitmapInterpolationMode*RectangleF
     | CreateEllipse   of float32*BrushId*BrushId*Direct2D1.Ellipse
     | CreateRectangle of float32*BrushId*BrushId*RectangleF
     | CreateText      of BrushId*TextFormatId*RectangleF*string
@@ -30,14 +32,21 @@ module internal SceneRenderer =
   type Input = 
     | DoNothing
     | Exit
-    | Background  of Color4
-    | BrushInput  of BrushId*BrushDescriptor
-    | VisualInput of VisualId*VisualInput
+    | Clear
+    | Background      of Color4
+    | BitmapInput     of BitmapId*BitmapDescriptor
+    | BrushInput      of BrushId*BrushDescriptor
+    | TextFormatInput of TextFormatId*TextFormatDescriptor
+    | VisualInput     of VisualId*VisualInput
 
   let rec renderVisual (v : Visual) (d : Device) (rt : Direct2D1.RenderTarget) : unit =
     match v with
     | EmptyVisual ->
       ()
+    | BitmapVisual (b, o, bim, r) ->
+      let bb = d.GetBitmap b
+      if bb <> null && o > 0.0f then
+        rt.DrawBitmap (bb, r, o, bim)
     | EllipseVisual (sw, s, f, e) ->
       let fb = d.GetBrush f
       let sb = d.GetBrush s
@@ -74,6 +83,8 @@ module internal SceneRenderer =
       | ResizeVisual _ ->
         // Not supported on creation
         EmptyVisual
+      | CreateBitmap (bid, o, bim, r) ->
+        BitmapVisual (bid, o, bim, r)
       | CreateEllipse (sw, s, f, e) ->
         EllipseVisual (sw, s, f, e)
       | CreateRectangle (sw, s, f, r) ->
@@ -88,6 +99,8 @@ module internal SceneRenderer =
         match v with
         | EmptyVisual -> 
           EmptyVisual
+        | BitmapVisual  (bid, o, bim, r) ->
+          BitmapVisual  (bid, o, bim, rmove2 pos r)
         | EllipseVisual (sw, s, f, r) ->
           EllipseVisual (sw, s, f, emove2 pos r)
         | RectangleVisual (sw, s, f, r) ->
@@ -99,6 +112,8 @@ module internal SceneRenderer =
         match v with
         | EmptyVisual -> 
           EmptyVisual
+        | BitmapVisual  (bid, o, bim, r) ->
+          BitmapVisual  (bid, o, bim, rresize2 sz r)
         | EllipseVisual (sw, s, f, r) ->
           EllipseVisual (sw, s, f, eresize2 sz r)
         | RectangleVisual (sw, s, f, r) ->
@@ -108,7 +123,7 @@ module internal SceneRenderer =
       | _ ->
         createVisual k u
 
-    let onRender (d : Device) (rt : Direct2D1.RenderTarget) : bool =
+    let onRender (delay : (unit -> unit) -> unit) (d : Device) (rt : Direct2D1.RenderTarget) : bool =
       let mutable cont  = true
       let mutable i     = DoNothing
       while input.TryDequeue (&i) do
@@ -119,10 +134,17 @@ module internal SceneRenderer =
           background := bkg
         | Exit ->
           cont <- false
-        | VisualInput (vid, vi) ->
-          ignore <| visuals.CreateOrUpdate vid vi createVisual updateVisual
+        | Clear ->
+          visuals.Clear ()
+        | BitmapInput (bid, bd) ->
+//          delay <| fun () -> 
+            ignore <| d.CreateBitmap bid bd
         | BrushInput (bid, bd) ->
           ignore <| d.CreateBrush bid bd
+        | TextFormatInput (tfid, tfd) ->
+          ignore <| d.CreateTextFormat tfid tfd
+        | VisualInput (vid, vi) ->
+          ignore <| visuals.CreateOrUpdate vid vi createVisual updateVisual
 
       onRefresh ()
 
@@ -137,7 +159,8 @@ module internal SceneRenderer =
       try
         Window.show "FunBasic Direct2D" 1024 768 doNothing onRender
       with
-      | e -> () // TODO: Trace
+      | e -> 
+        traceException e
 
     let uiThread =
       let t = Thread (ThreadStart uiProc)
@@ -167,8 +190,16 @@ type Scene() =
   let enqueueInput i =
     renderQueue.Enqueue i
 
+  let enqueueBitmapInput bid bd =
+    BitmapInput (bitmapId bid, bd)
+    |> renderQueue.Enqueue
+
   let enqueueBrushInput bid bd =
     BrushInput (brushId bid, bd)
+    |> renderQueue.Enqueue
+
+  let enqueueTextFormatInput tfid tfd =
+    TextFormatInput (textFormatId tfid, tfd)
     |> renderQueue.Enqueue
 
   let enqueueVisualInput vid vi =
@@ -257,18 +288,42 @@ type Scene() =
     
   member x.Show           () : unit = ()
   member x.Close          () : unit = ()
-  member x.Clear          () : unit = ()
+  member x.Clear          () : unit =
+    Clear
+    |> enqueueInput
+  member x.DownloadBitmap (bitmapId : int, url : string) : unit =
+    try
+      use wc = new System.Net.WebClient ()
+      let bytes = wc.DownloadData url
+      Bitmap bytes
+      |> enqueueBitmapInput bitmapId
+    with
+    | e -> 
+      traceException e
   member x.WaitForRefresh () : unit =
     ignore <| refreshLock.Reset ()
     ignore <| refreshLock.WaitOne ()
-  member x.BackGround     (color : string) : unit =
+  member x.Background     (color : string) : unit =
     Background (parseColor color)
     |> enqueueInput
   member x.SolidBrush     (brushId : int, color : string) : unit =
     SolidBrush (parseColor color)
     |> enqueueBrushInput brushId
+  member x.TextFormat     (textFormatId : int , fontFamily : string, fontSize : double) : unit =
+    SimpleTextFormat (fontFamily, float32 fontSize)
+    |> enqueueTextFormatInput textFormatId
   member x.Move           (id : int, x1 : float, y1 : float) : unit = 
     MoveVisual (float32 x1, float32 y1)
+    |> enqueueVisualInput id
+  member x.Bitmap         ( id            : int
+                          , bid           : int
+                          , opacity       : float 
+                          , left          : float 
+                          , top           : float 
+                          , width         : float 
+                          , height        : float
+                          ) : unit = 
+    CreateBitmap (bitmapId bid, float32 opacity, Direct2D1.BitmapInterpolationMode.NearestNeighbor, rect left top width height)
     |> enqueueVisualInput id
   member x.Rectangle      ( id            : int
                           , fillBrush     : int
@@ -291,6 +346,17 @@ type Scene() =
                           , radiusY       : float
                           ) : unit = 
     CreateEllipse (float32 strokeWidth, brushId strokeBrush, brushId fillBrush, ellipse centerX centerY radiusX radiusY)
+    |> enqueueVisualInput id
+  member x.Text           ( id            : int
+                          , fillBrush     : int   
+                          , textFormat    : int 
+                          , left          : float 
+                          , top           : float 
+                          , width         : float 
+                          , height        : float
+                          , text          : string
+                          ) : unit = 
+    CreateText (brushId fillBrush, textFormatId textFormat, rect left top width height, text)
     |> enqueueVisualInput id
   interface IDisposable with
     member x.Dispose () =
