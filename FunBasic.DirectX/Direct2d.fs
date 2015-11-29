@@ -10,11 +10,15 @@ open SharpDX
 open FunBasic.DirectX.Common
 
 type BitmapDescriptor =
-  | Bitmap of byte[]
+  | BitmapBits of byte[]
 
 type BrushDescriptor =
   | Transparent
-  | SolidBrush of Color4
+  | SolidBrush          of  Color4
+                        //  Start   End     ExtendMode           Stops
+  | LinearGradientBrush of  Vector2*Vector2*Direct2D1.ExtendMode*(Color4*float32) []
+                        //  Center  Radius  Origin  ExtendMode           Stops
+  | RadialGradientBrush of  Vector2*Vector2*Vector2*Direct2D1.ExtendMode*(Color4*float32) []
 
   member x.IsVisible =
     match x with
@@ -24,29 +28,24 @@ type BrushDescriptor =
 type TextFormatDescriptor =
   | SimpleTextFormat of string * float32
 
-type BitmapSource =
-  {
-    Stream    : Stream
-    Decoder   : WIC.BitmapDecoder
-    Source    : WIC.BitmapSource
-    Converter : WIC.FormatConverter
-  }
+[<AllowNullLiteral>]
+type BitmapSource ( stream : Stream
+                  , decoder   : WIC.BitmapDecoder
+                  , source    : WIC.BitmapSource
+                  , converter : WIC.FormatConverter
+  ) =
 
-  member x.HasValue =
-    x.Stream        <> null
-    && x.Decoder    <> null
-    && x.Source     <> null
-    && x.Converter  <> null
+  member x.Converter  = converter
+  member x.Source     = source
+  member x.Decoder    = decoder
+  member x.Stream     = stream
 
   interface IDisposable with
     member x.Dispose () =
-      dispose x.Converter
-      dispose x.Source
-      dispose x.Decoder
-      dispose x.Stream
-
-let noSource : BitmapSource = 
-  { Stream = null; Decoder = null; Source = null; Converter = null}
+      dispose converter
+      dispose source
+      dispose decoder
+      dispose stream
 
 type DeviceIndependentResources() = 
 
@@ -54,9 +53,9 @@ type DeviceIndependentResources() =
 
   let bitmaps         = Dictionary<BitmapId, BitmapDescriptor*BitmapSource> ()
 
-  let createBitmap (bid : BitmapId) (bd : BitmapDescriptor) : BitmapDescriptor*BitmapSource = 
+  let createBitmap (bid : BitmapId) (bd : BitmapDescriptor) : BitmapSource = 
     match bd with 
-    | Bitmap bytes ->
+    | BitmapBits bytes ->
       try
         // TODO:
         let ms    = new MemoryStream (bytes)
@@ -66,22 +65,20 @@ type DeviceIndependentResources() =
           let f = dec.GetFrame 0
           let c = new WIC.FormatConverter (imagingFactory)
           c.Initialize (f, WIC.PixelFormat.Format32bppPRGBA)
-          let bs = { Stream = ms; Decoder = dec; Source = f; Converter = c }
-          bd, bs
+          let bs = new BitmapSource (ms, dec, f, c)
+          bs
         else
-          bd, noSource
+          null
       with 
       | e -> 
         traceException e
-        bd, noSource
+        null
 
-  let updateBitmap      = makeResourceUpdater createBitmap
-
-  member x.CreateBitmap (bid : BitmapId) (bd : BitmapDescriptor) : BitmapSource =
-    snd <| bitmaps.CreateOrUpdate bid bd createBitmap updateBitmap
+  member x.ReserverBitmap (bid : BitmapId) (bd : BitmapDescriptor) : unit =
+    reserveResource bid bd bitmaps
 
   member x.GetBitmap (bid : BitmapId) : BitmapSource =
-    findResource bid noSource bitmaps
+    getResource bid null createBitmap bitmaps
   
   interface IDisposable with
     member x.Dispose () =
@@ -156,6 +153,9 @@ type Device (dir : DeviceIndependentResources, form : Windows.RenderForm) =
                                 )
                               )
 
+  let defaultBrush        = new Direct2D1.SolidColorBrush (d2dRenderTarget, Color.Red.ToColor4 ()) :> Direct2D1.Brush
+  let defaultTextFormat   = new DirectWrite.TextFormat (dwFactory, "Tahoma", 24.0f)
+
   let bitmaps             = Dictionary<BitmapId, BitmapDescriptor*Direct2D1.Bitmap> ()
   let brushes             = Dictionary<BrushId, BrushDescriptor*Direct2D1.Brush> ()
   let textFormats         = Dictionary<TextFormatId, TextFormatDescriptor*DirectWrite.TextFormat> ()
@@ -165,48 +165,70 @@ type Device (dir : DeviceIndependentResources, form : Windows.RenderForm) =
     disposeResourceDictionary brushes
     disposeResourceDictionary bitmaps
 
-  let createBrush (bid : BrushId) (bd : BrushDescriptor) : BrushDescriptor*Direct2D1.Brush =
-    match bd with
-    | Transparent   -> bd, null
-    | SolidBrush c  -> bd, upcast new Direct2D1.SolidColorBrush (d2dRenderTarget, c)
+  let gradientStop (c : Color4) (p : float32) : Direct2D1.GradientStop = 
+    let mutable gs = Direct2D1.GradientStop ()
+    gs.Color    <- c
+    gs.Position <- p
+    gs
 
-  let createBitmap (bid : BitmapId) (bd : BitmapDescriptor) : BitmapDescriptor*Direct2D1.Bitmap =
-    match bd with
-    | Bitmap bytes  -> 
-      try
-        let bitmapSource = dir.CreateBitmap bid bd
-        if bitmapSource.HasValue then
-          let p = Direct2D1.BitmapProperties <| Direct2D1.PixelFormat (DXGI.Format.R8G8B8A8_UNorm, Direct2D1.AlphaMode.Premultiplied)
-          bd, Direct2D1.Bitmap.FromWicBitmap (d2dRenderTarget, bitmapSource.Converter, p)
-        else
-          bd, null
-      with
-      | e -> 
-        traceException e
-        bd, null
+  let gradientStopCollection (em : Direct2D1.ExtendMode) (stops : (Color4*float32) []) : Direct2D1.GradientStopCollection = 
+    let gstops  = stops |> Array.map (fun (c,p) -> gradientStop c p)
+    new Direct2D1.GradientStopCollection (d2dRenderTarget, gstops, em)
 
-  let createTextFormat (tfid : TextFormatId) (tfd : TextFormatDescriptor) : TextFormatDescriptor*DirectWrite.TextFormat =
+  let createBrush (bid : BrushId) (bd : BrushDescriptor) : Direct2D1.Brush =
+    match bd with
+    | Transparent                             -> 
+      null
+    | SolidBrush c                            -> 
+      upcast new Direct2D1.SolidColorBrush (d2dRenderTarget, c)
+    | LinearGradientBrush (_, _, _, stops)
+    | RadialGradientBrush (_, _, _, _, stops) when stops.Length = 0 ->
+      null
+    | LinearGradientBrush (sp, ep, em, stops) -> 
+      let mutable props = Direct2D1.LinearGradientBrushProperties ()
+      props.StartPoint  <- sp
+      props.EndPoint    <- ep
+      use gcoll         = gradientStopCollection em stops
+      upcast new Direct2D1.LinearGradientBrush (d2dRenderTarget, props, gcoll)
+    | RadialGradientBrush (c, r, o, em, stops) -> 
+      let mutable props = Direct2D1.RadialGradientBrushProperties ()
+      props.Center              <- c
+      props.RadiusX             <- r.X
+      props.RadiusY             <- r.Y
+      props.GradientOriginOffset<- o
+      use gcoll         = gradientStopCollection em stops
+      upcast new Direct2D1.RadialGradientBrush (d2dRenderTarget, props, gcoll)
+
+  let createBitmap (bid : BitmapId) (bd : BitmapDescriptor) : Direct2D1.Bitmap =
+    try
+      dir.ReserverBitmap bid bd
+      let bitmapSource = dir.GetBitmap bid
+      if bitmapSource <> null then
+        let p = Direct2D1.BitmapProperties <| Direct2D1.PixelFormat (DXGI.Format.R8G8B8A8_UNorm, Direct2D1.AlphaMode.Premultiplied)
+        Direct2D1.Bitmap.FromWicBitmap (d2dRenderTarget, bitmapSource.Converter, p)
+      else
+        null
+    with
+    | e -> 
+      traceException e
+      null
+
+  let createTextFormat (tfid : TextFormatId) (tfd : TextFormatDescriptor) : DirectWrite.TextFormat =
     match tfd with
     | SimpleTextFormat (fontFamilyName, fontSize) ->
-        tfd, new DirectWrite.TextFormat (dwFactory, fontFamilyName, fontSize)
-
-  let updateBitmap      = makeResourceUpdater createBitmap
-  let updateBrush       = makeResourceUpdater createBrush
-  let updateTextFormat  = makeResourceUpdater createTextFormat
+        new DirectWrite.TextFormat (dwFactory, fontFamilyName, fontSize)
 
   member x.InitializeResources (di : DeviceInit) : unit =
     disposeResources ()
 
-    // TODO: Rewrite
-
     for bid, bd in di.Bitmaps do
-      ignore <| bitmaps.GetOrCreate bid bd createBitmap
+      x.ReserveBitmap bid bd
 
     for bid, bd in di.Brushes do
-      ignore <| brushes.GetOrCreate bid bd createBrush
+      x.ReserveBrush bid bd
 
     for tfid, tfd in di.TextFormats do
-      ignore <| textFormats.GetOrCreate tfid tfd createTextFormat
+      x.ReserveTextFormat tfid tfd
 
   member x.CreateDeviceInit () : DeviceInit =
     let inline stripResource (s : Dictionary<'K, 'U*'V>) =
@@ -227,23 +249,32 @@ type Device (dir : DeviceIndependentResources, form : Windows.RenderForm) =
 
     { Bitmaps = bmps; Brushes = bs; TextFormats = tfs }
 
-  member x.CreateBitmap (bid : BitmapId) (bd : BitmapDescriptor) : Direct2D1.Bitmap =
-    snd <| bitmaps.CreateOrUpdate bid bd createBitmap updateBitmap
+  member x.ReserveBitmap (bid : BitmapId) (bd : BitmapDescriptor) : unit =
+    reserveResource bid bd bitmaps
 
   member x.GetBitmap (bid : BitmapId) : Direct2D1.Bitmap =
-    findResource bid null bitmaps
+    getResource bid null createBitmap bitmaps
 
-  member x.CreateBrush (bid : BrushId) (bd : BrushDescriptor) : Direct2D1.Brush =
-    snd <| brushes.CreateOrUpdate bid bd createBrush updateBrush
+  member x.GetBitmapDescriptor (bid : BitmapId) : BitmapDescriptor option =
+    getDescriptor bid bitmaps
+
+  member x.ReserveBrush (bid : BrushId) (bd : BrushDescriptor) : unit =
+    reserveResource bid bd brushes
 
   member x.GetBrush (bid : BrushId) : Direct2D1.Brush =
-    findResource bid null brushes
+    getResource bid defaultBrush createBrush brushes
 
-  member x.CreateTextFormat (tfid : TextFormatId) (tfd : TextFormatDescriptor)  : DirectWrite.TextFormat =
-    snd <| textFormats.CreateOrUpdate tfid tfd createTextFormat updateTextFormat
+  member x.GetBrushDescriptor (bid : BrushId) : BrushDescriptor option =
+    getDescriptor bid brushes
+
+  member x.ReserveTextFormat (tfid : TextFormatId) (tfd : TextFormatDescriptor)  : unit =
+    reserveResource tfid tfd textFormats
 
   member x.GetTextFormat (tfid : TextFormatId) : DirectWrite.TextFormat =
-    findResource tfid null textFormats
+    getResource tfid defaultTextFormat createTextFormat textFormats
+
+  member x.GetTextFormatDescriptor (tfid : TextFormatId) : TextFormatDescriptor option =
+    getDescriptor tfid textFormats
 
   member x.Width                  = width
   member x.Height                 = height
@@ -261,6 +292,8 @@ type Device (dir : DeviceIndependentResources, form : Windows.RenderForm) =
     member x.Dispose () =
       disposeResources ()
 
+      dispose defaultTextFormat
+      dispose defaultBrush
       dispose d2dRenderTarget
       dispose surface
       dispose backBuffer

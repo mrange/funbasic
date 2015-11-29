@@ -10,34 +10,96 @@ open System.Collections.Concurrent
 open System.Collections.Generic
 open System.Threading
 
+type VisualInput =
+                              // X       Y
+  | MoveVisual                of float32*float32
+                              // Width   Height
+  | ResizeVisual              of float32*float32
+                              // Bitmap   Opacity InterpolationMode                 Bounds
+  | CreateBitmap              of BitmapId*float32*Direct2D1.BitmapInterpolationMode*RectangleF
+                              // Width   Stroke  Fill    Bounds
+  | CreateEllipse             of float32*BrushId*BrushId*Direct2D1.Ellipse
+                              // Width   Stroke  Fill    Bounds
+  | CreateRectangle           of float32*BrushId*BrushId*RectangleF
+                              // Fill    TextFormat   Bounds     Text
+  | CreateText                of BrushId*TextFormatId*RectangleF*string
+
+type BrushInput =
+  | CreateSolidBrush          of Color4
+                              // Start   End     ExtendMode           
+  | CreateLinearGradientBrush of Vector2*Vector2*Direct2D1.ExtendMode
+                              // Center  Radius  Origin  ExtendMode           
+  | CreateRadialGradientBrush of Vector2*Vector2*Vector2*Direct2D1.ExtendMode
+  | CreateGradientStop        of Color4*float32
+
+type BitmapInput =
+  | CreateBitmapFromBits      of byte[]
+
+type TextFormatInput =
+  | CreateTextFormat          of string * float32
+
+type Input = 
+  | DoNothing
+  | Exit
+  | Clear
+  | Background                of Color4
+  | BitmapInput               of BitmapId*BitmapInput
+  | BrushInput                of BrushId*BrushInput
+  | TextFormatInput           of TextFormatId*TextFormatInput
+  | VisualInput               of VisualId*VisualInput
+
 module internal SceneRenderer =
   type Vector       = float*float
   type BoundingBox  = float*float*float*float
 
   type Visual =
     | EmptyVisual
-    | BitmapVisual    of BitmapId*float32*Direct2D1.BitmapInterpolationMode*RectangleF
-    | EllipseVisual   of float32*BrushId*BrushId*Direct2D1.Ellipse
-    | RectangleVisual of float32*BrushId*BrushId*RectangleF
-    | TextVisual      of BrushId*TextFormatId*RectangleF*string
+                                // Bitmap   Opacity InterpolationMode                 Bounds
+    | BitmapVisual              of BitmapId*float32*Direct2D1.BitmapInterpolationMode*RectangleF
+                                // Width   Stroke  Fill    Bounds
+    | EllipseVisual             of float32*BrushId*BrushId*Direct2D1.Ellipse
+                                // Width   Stroke  Fill    Bounds
+    | RectangleVisual           of float32*BrushId*BrushId*RectangleF
+                                // Fill    TextFormat   Bounds     Text
+    | TextVisual                of BrushId*TextFormatId*RectangleF*string
 
   type VisualInput =
-    | MoveVisual      of float32*float32
-    | ResizeVisual    of float32*float32
-    | CreateBitmap    of BitmapId*float32*Direct2D1.BitmapInterpolationMode*RectangleF
-    | CreateEllipse   of float32*BrushId*BrushId*Direct2D1.Ellipse
-    | CreateRectangle of float32*BrushId*BrushId*RectangleF
-    | CreateText      of BrushId*TextFormatId*RectangleF*string
+                                // X       Y
+    | MoveVisual                of float32*float32
+                                // Width   Height
+    | ResizeVisual              of float32*float32
+                                // Bitmap   Opacity InterpolationMode                 Bounds
+    | CreateBitmap              of BitmapId*float32*Direct2D1.BitmapInterpolationMode*RectangleF
+                                // Width   Stroke  Fill    Bounds
+    | CreateEllipse             of float32*BrushId*BrushId*Direct2D1.Ellipse
+                                // Width   Stroke  Fill    Bounds
+    | CreateRectangle           of float32*BrushId*BrushId*RectangleF
+                                // Fill    TextFormat   Bounds     Text
+    | CreateText                of BrushId*TextFormatId*RectangleF*string
+
+  type BrushInput =
+    | CreateSolidBrush          of Color4
+                                // Start   End     ExtendMode           
+    | CreateLinearGradientBrush of Vector2*Vector2*Direct2D1.ExtendMode
+                                // Center  Radius  Origin  ExtendMode           
+    | CreateRadialGradientBrush of Vector2*Vector2*Vector2*Direct2D1.ExtendMode
+    | CreateGradientStop        of Color4*float32
+
+  type BitmapInput =
+    | CreateBitmapFromBits      of byte[]
+
+  type TextFormatInput =
+    | CreateTextFormat          of string * float32
 
   type Input = 
     | DoNothing
     | Exit
     | Clear
-    | Background      of Color4
-    | BitmapInput     of BitmapId*BitmapDescriptor
-    | BrushInput      of BrushId*BrushDescriptor
-    | TextFormatInput of TextFormatId*TextFormatDescriptor
-    | VisualInput     of VisualId*VisualInput
+    | Background                of Color4
+    | BitmapInput               of BitmapId*BitmapInput
+    | BrushInput                of BrushId*BrushInput
+    | TextFormatInput           of TextFormatId*TextFormatInput
+    | VisualInput               of VisualId*VisualInput
 
   let rec renderVisual (v : Visual) (d : Device) (rt : Direct2D1.RenderTarget) : unit =
     match v with
@@ -136,13 +198,27 @@ module internal SceneRenderer =
           cont <- false
         | Clear ->
           visuals.Clear ()
-        | BitmapInput (bid, bd) ->
-//          delay <| fun () -> 
-            ignore <| d.CreateBitmap bid bd
-        | BrushInput (bid, bd) ->
-          ignore <| d.CreateBrush bid bd
-        | TextFormatInput (tfid, tfd) ->
-          ignore <| d.CreateTextFormat tfid tfd
+        | BitmapInput (bid, (CreateBitmapFromBits bytes)) ->
+          d.ReserveBitmap bid (BitmapBits bytes)
+        | BrushInput (bid, bi) ->
+          match bi with
+          | CreateSolidBrush c ->
+            d.ReserveBrush bid (SolidBrush c)
+          | CreateLinearGradientBrush (s, e, em) ->
+            d.ReserveBrush bid (LinearGradientBrush (s, e, em, [||]))
+          | CreateRadialGradientBrush (c, r, o, em) ->
+            d.ReserveBrush bid (RadialGradientBrush (c, r, o, em, [||]))
+          | CreateGradientStop (color, offset) ->
+            let ogd = d.GetBrushDescriptor bid
+            match ogd with
+            | Some (LinearGradientBrush (s, e, em, stops)) ->
+              d.ReserveBrush bid (LinearGradientBrush (s, e, em, stops |> Array.append [|color, offset|]))
+            | Some (RadialGradientBrush (c, r, o, em, stops)) ->
+              d.ReserveBrush bid (RadialGradientBrush (c, r, o, em, stops |> Array.append [|color, offset|]))
+            | _ ->
+              ()
+        | TextFormatInput (tfid, (CreateTextFormat (fontFamily, fontSize))) ->
+          d.ReserveTextFormat tfid (SimpleTextFormat (fontFamily, fontSize))
         | VisualInput (vid, vi) ->
           ignore <| visuals.CreateOrUpdate vid vi createVisual updateVisual
 
@@ -173,12 +249,11 @@ module internal SceneRenderer =
 open SceneRenderer
 
 type Scene() =
-
-  let ellipse (x : float) (y : float) (radiusX : float) (radiusY : float) : Direct2D1.Ellipse =
-    Direct2D1.Ellipse (v2 (float32 x) (float32 y), float32 radiusX, float32 radiusY)
+  let ellipse (x : float) (y : float) (w : float) (h : float) : Direct2D1.Ellipse =
+    Direct2D1.Ellipse (v2 (float32 x) (float32 y), float32 (w / 2.0), float32 (h / 2.0))
 
   let rect (x : float) (y : float) (w : float) (h : float) : RectangleF = 
-    RectangleF (float32 x,float32 y,float32 w,float32 h)
+    RectangleF (float32 (x - w / 2.0), float32 (y - h / 2.0), float32 w, float32 h)
 
   let refreshLock = new ManualResetEvent false
 
@@ -291,26 +366,32 @@ type Scene() =
   member x.Clear          () : unit =
     Clear
     |> enqueueInput
+
+  member x.WaitForRefresh () : unit =
+    ignore <| refreshLock.Reset ()
+    ignore <| refreshLock.WaitOne ()
+
   member x.DownloadBitmap (bitmapId : int, url : string) : unit =
     try
       use wc = new System.Net.WebClient ()
       let bytes = wc.DownloadData url
-      Bitmap bytes
+      CreateBitmapFromBits bytes
       |> enqueueBitmapInput bitmapId
     with
     | e -> 
       traceException e
-  member x.WaitForRefresh () : unit =
-    ignore <| refreshLock.Reset ()
-    ignore <| refreshLock.WaitOne ()
-  member x.Background     (color : string) : unit =
+
+  member x.Background (color : string) : unit =
     Background (parseColor color)
     |> enqueueInput
-  member x.SolidBrush     (brushId : int, color : string) : unit =
-    SolidBrush (parseColor color)
+  member x.SolidBrush             (brushId : int, color : string) : unit =
+    CreateSolidBrush (parseColor color)
+    |> enqueueBrushInput brushId
+  member x.LinearGradientBrush     (brushId : int, color : string) : unit =
+    CreateSolidBrush (parseColor color)
     |> enqueueBrushInput brushId
   member x.TextFormat     (textFormatId : int , fontFamily : string, fontSize : double) : unit =
-    SimpleTextFormat (fontFamily, float32 fontSize)
+    CreateTextFormat (fontFamily, float32 fontSize)
     |> enqueueTextFormatInput textFormatId
   member x.Move           (id : int, x1 : float, y1 : float) : unit = 
     MoveVisual (float32 x1, float32 y1)
@@ -318,23 +399,23 @@ type Scene() =
   member x.Bitmap         ( id            : int
                           , bid           : int
                           , opacity       : float 
-                          , left          : float 
-                          , top           : float 
+                          , centerX       : float 
+                          , centerY       : float 
                           , width         : float 
                           , height        : float
                           ) : unit = 
-    CreateBitmap (bitmapId bid, float32 opacity, Direct2D1.BitmapInterpolationMode.NearestNeighbor, rect left top width height)
+    CreateBitmap (bitmapId bid, float32 opacity, Direct2D1.BitmapInterpolationMode.NearestNeighbor, rect centerX centerY width height)
     |> enqueueVisualInput id
   member x.Rectangle      ( id            : int
                           , fillBrush     : int
                           , strokeBrush   : int
                           , strokeWidth   : float 
-                          , left          : float 
-                          , top           : float 
+                          , centerX       : float 
+                          , centerY       : float 
                           , width         : float 
                           , height        : float
                           ) : unit = 
-    CreateRectangle (float32 strokeWidth, brushId strokeBrush, brushId fillBrush, rect left top width height)
+    CreateRectangle (float32 strokeWidth, brushId strokeBrush, brushId fillBrush, rect centerX centerY width height)
     |> enqueueVisualInput id
   member x.Ellipse        ( id            : int
                           , fillBrush     : int   
@@ -342,21 +423,21 @@ type Scene() =
                           , strokeWidth   : float 
                           , centerX       : float 
                           , centerY       : float 
-                          , radiusX       : float 
-                          , radiusY       : float
+                          , width         : float 
+                          , height        : float
                           ) : unit = 
-    CreateEllipse (float32 strokeWidth, brushId strokeBrush, brushId fillBrush, ellipse centerX centerY radiusX radiusY)
+    CreateEllipse (float32 strokeWidth, brushId strokeBrush, brushId fillBrush, ellipse centerX centerY width height)
     |> enqueueVisualInput id
   member x.Text           ( id            : int
                           , fillBrush     : int   
                           , textFormat    : int 
-                          , left          : float 
-                          , top           : float 
+                          , centerX       : float 
+                          , centerY       : float 
                           , width         : float 
                           , height        : float
                           , text          : string
                           ) : unit = 
-    CreateText (brushId fillBrush, textFormatId textFormat, rect left top width height, text)
+    CreateText (brushId fillBrush, textFormatId textFormat, rect centerX centerY width height, text)
     |> enqueueVisualInput id
   interface IDisposable with
     member x.Dispose () =

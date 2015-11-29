@@ -1,0 +1,57 @@
+﻿namespace FunBasic.DirectX.ApiModel
+<#@ include file      ="Generated_ApiModel.ttinclude" #>
+<#@ output  extension = ".fs"                         #>
+
+<#
+  var prepend = "";
+
+  var grouped = model
+    .GroupBy (md => md.Prefix)
+    .OrderBy (g => g.Key.Name)
+    .ToArray ();
+
+  foreach (var g in grouped)
+  {
+    var prefix = g.Key;
+#>
+    type <#=g.Key.Name#> =
+<#
+  foreach (var md in g.OrderBy (md => md.Verb).ThenBy (md => md.Noun))
+  {
+#>
+    // Method: <#=md.Verb#><#=md.Noun#>
+    | <#=LeftJustify (md.Verb + md.Noun, 20)#> of <#=ToTypeTuple (md.ToArray ())#>
+<#
+  }
+#>
+
+<#
+  }
+#>
+
+    type Input =
+<#
+  foreach (var g in grouped)
+  {
+    var prefix = g.Key;
+    var ps = prefix.PrependWith.Concat (new [] {PD (prefix.Name, "payload")}).ToArray ();
+#>
+    | <#=LeftJustify (prefix.Name, 20)#> of <#=ToTypeTuple (ps)#>
+<#
+  }
+#>
+
+<#+
+  static string ToTypeTuple (ParameterDescriptor [] parameters)
+  {
+    if (parameters.Length == 0)
+    {
+      return "unit";
+    }
+    else
+    {
+      var types = parameters.Select (p => p.Name + ":" + p.Type).ToArray ();
+      return string.Join ("*", types);
+    }
+  }
+#>

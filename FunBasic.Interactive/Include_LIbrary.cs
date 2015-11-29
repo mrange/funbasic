@@ -14,39 +14,39 @@
 
 
 // ############################################################################
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Interfaces\IFlickr.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Interfaces\ISpeech.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\Clock.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\Controls.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\Desktop.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\Flickr.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\GraphicsWindow.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Interfaces\IConsole.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Interfaces\IControls.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Interfaces\IDrawings.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Interfaces\IImages.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Interfaces\IKeyboard.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\ImageList.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Interfaces\IMouse.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Interfaces\IShapes.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Interfaces\ISounds.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Interfaces\IStyle.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Interfaces\ISurface.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Interfaces\ITimer.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\Math.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\Mouse.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\Program.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\Shapes.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\Sound.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\Speech.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\Stack.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\Text.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\TextWindow.cs
-// @@@ SKIPPING (Blacklisted): C:\temp\funbasic\FunBasic.Library\Modules\Web.cs
-// @@@ SKIPPING (Blacklisted): C:\temp\funbasic\FunBasic.Library\Properties\AssemblyInfo.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\Timer.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\Modules\Turtle.cs
-// @@@ INCLUDING: C:\temp\funbasic\FunBasic.Library\_Library.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IFlickr.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ISpeech.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Clock.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Controls.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Desktop.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Flickr.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\GraphicsWindow.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IConsole.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IControls.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IDrawings.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IImages.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IKeyboard.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\ImageList.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IMouse.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IShapes.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ISounds.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IStyle.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ISurface.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ITimer.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Math.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Mouse.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Program.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Shapes.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Sound.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Speech.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Stack.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Text.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\TextWindow.cs
+// @@@ SKIPPING (Blacklisted): C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Web.cs
+// @@@ SKIPPING (Blacklisted): C:\temp\GitHub\funbasic\FunBasic.Library\Properties\AssemblyInfo.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Timer.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Turtle.cs
+// @@@ INCLUDING: C:\temp\GitHub\funbasic\FunBasic.Library\_Library.cs
 // ############################################################################
 // Certains directives such as #define and // Resharper comments has to be 
 // moved to top in order to work properly    
@@ -54,7 +54,7 @@
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IFlickr.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IFlickr.cs
 namespace FunBasic.Library
 {
    public interface IFlickr
@@ -63,11 +63,11 @@ namespace FunBasic.Library
       string GetTaggedPhoto(string tags);
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IFlickr.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IFlickr.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\ISpeech.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ISpeech.cs
 namespace FunBasic.Library
 {
    public interface ISpeech
@@ -75,11 +75,11 @@ namespace FunBasic.Library
       void Say(string text);
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\ISpeech.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ISpeech.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Clock.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Clock.cs
 namespace FunBasic.Library
 {
    using System;
@@ -173,11 +173,11 @@ namespace FunBasic.Library
 
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Clock.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Clock.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Controls.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Controls.cs
 namespace FunBasic.Library
 {
    using System;
@@ -238,11 +238,11 @@ namespace FunBasic.Library
       }
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Controls.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Controls.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Desktop.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Desktop.cs
 namespace FunBasic.Library
 {
    public static class Desktop
@@ -264,11 +264,11 @@ namespace FunBasic.Library
       }
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Desktop.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Desktop.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Flickr.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Flickr.cs
 namespace FunBasic.Library
 {
    public static class Flickr
@@ -291,11 +291,11 @@ namespace FunBasic.Library
       }
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Flickr.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Flickr.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\GraphicsWindow.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\GraphicsWindow.cs
 namespace FunBasic.Library
 {
    public static class GraphicsWindow
@@ -556,11 +556,11 @@ namespace FunBasic.Library
       #endregion
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\GraphicsWindow.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\GraphicsWindow.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IConsole.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IConsole.cs
 namespace FunBasic.Library
 {
    public interface IConsole
@@ -568,11 +568,11 @@ namespace FunBasic.Library
       void WriteLine(object value);
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IConsole.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IConsole.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IControls.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IControls.cs
 namespace FunBasic.Library
 {
    public interface IControls
@@ -590,11 +590,11 @@ namespace FunBasic.Library
       #endregion
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IControls.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IControls.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IDrawings.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IDrawings.cs
 namespace FunBasic.Library
 {
    public interface IDrawings
@@ -614,11 +614,11 @@ namespace FunBasic.Library
       void FillRectangle(double x, double y, double width, double height);      
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IDrawings.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IDrawings.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IImages.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IImages.cs
 namespace FunBasic.Library
 {
    public interface IImages
@@ -630,11 +630,11 @@ namespace FunBasic.Library
       #endregion
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IImages.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IImages.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IKeyboard.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IKeyboard.cs
 namespace FunBasic.Library
 {
    public interface IKeyboard
@@ -646,11 +646,11 @@ namespace FunBasic.Library
       #endregion
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IKeyboard.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IKeyboard.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\ImageList.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\ImageList.cs
 namespace FunBasic.Library
 {
    public static class ImageList
@@ -678,11 +678,11 @@ namespace FunBasic.Library
       }
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\ImageList.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\ImageList.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IMouse.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IMouse.cs
 namespace FunBasic.Library
 {
    public interface IMouse
@@ -696,11 +696,11 @@ namespace FunBasic.Library
       #endregion
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IMouse.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IMouse.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IShapes.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IShapes.cs
 namespace FunBasic.Library
 {
    public interface IShapes
@@ -725,11 +725,11 @@ namespace FunBasic.Library
       void SetText(string name, string text);
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IShapes.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IShapes.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\ISounds.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ISounds.cs
 
 namespace FunBasic.Library
 {
@@ -738,11 +738,11 @@ namespace FunBasic.Library
       void PlayStockSound(string name, bool wait);
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\ISounds.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ISounds.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IStyle.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IStyle.cs
 namespace FunBasic.Library
 {
    public interface IStyle
@@ -756,11 +756,11 @@ namespace FunBasic.Library
       bool FontBold { get; set; }
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\IStyle.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IStyle.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\ISurface.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ISurface.cs
 namespace FunBasic.Library
 {
    public interface ISurface
@@ -772,11 +772,11 @@ namespace FunBasic.Library
       void ShowMessage(string content, string title);
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\ISurface.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ISurface.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\ITimer.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ITimer.cs
 namespace FunBasic.Library
 {
    public interface ITimer
@@ -787,11 +787,11 @@ namespace FunBasic.Library
       void Resume();
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Interfaces\ITimer.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ITimer.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Math.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Math.cs
 namespace FunBasic.Library
 {
    public static class Math
@@ -883,11 +883,11 @@ namespace FunBasic.Library
       }
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Math.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Math.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Mouse.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Mouse.cs
 namespace FunBasic.Library
 {
    public static class Mouse
@@ -905,11 +905,11 @@ namespace FunBasic.Library
    }
 }
  
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Mouse.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Mouse.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Program.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Program.cs
 namespace FunBasic.Library
 {
    using System.Threading;
@@ -943,11 +943,11 @@ namespace FunBasic.Library
       }
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Program.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Program.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Shapes.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Shapes.cs
 namespace FunBasic.Library
 {
    using System;
@@ -1056,11 +1056,11 @@ namespace FunBasic.Library
       }
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Shapes.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Shapes.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Sound.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Sound.cs
 namespace FunBasic.Library
 {
    public static class Sound
@@ -1113,11 +1113,11 @@ namespace FunBasic.Library
       }
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Sound.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Sound.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Speech.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Speech.cs
 namespace FunBasic.Library
 {
    public static class Speech
@@ -1135,11 +1135,11 @@ namespace FunBasic.Library
       }
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Speech.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Speech.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Stack.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Stack.cs
 namespace FunBasic.Library
 {
    using System.Collections.Generic;
@@ -1186,11 +1186,11 @@ namespace FunBasic.Library
       }
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Stack.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Stack.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Text.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Text.cs
 
 namespace FunBasic.Library
 {
@@ -1263,11 +1263,11 @@ namespace FunBasic.Library
       }
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Text.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Text.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\TextWindow.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\TextWindow.cs
 namespace FunBasic.Library
 {
    public static class TextWindow
@@ -1288,11 +1288,11 @@ namespace FunBasic.Library
       }
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\TextWindow.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\TextWindow.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Timer.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Timer.cs
 namespace FunBasic.Library
 {
    using System;
@@ -1330,11 +1330,11 @@ namespace FunBasic.Library
       }
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Timer.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Timer.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Turtle.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Turtle.cs
 namespace FunBasic.Library
 {
    using System;
@@ -1434,11 +1434,11 @@ namespace FunBasic.Library
       }
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\Modules\Turtle.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Turtle.cs
 // ############################################################################
 
 // ############################################################################
-// @@@ BEGIN_INCLUDE: C:\temp\funbasic\FunBasic.Library\_Library.cs
+// @@@ BEGIN_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\_Library.cs
 namespace FunBasic.Library
 {
    using System.Collections.Generic;
@@ -1466,7 +1466,6 @@ namespace FunBasic.Library
          CancellationToken token)
       {
          TextWindow.Init(console);
-         D2D.Init(keyboard);
          Desktop.Init(surface);                  
          GraphicsWindow.Init(style, surface, drawing, keyboard, mouse);
          Shapes.Init(shapes);
@@ -1488,8 +1487,7 @@ namespace FunBasic.Library
          var lookup = new Dictionary<string, Tuple<string,string>[]>();
          foreach(var ti in types.Where(t => !t.IsInterface && !t.Name.StartsWith("_") && !t.Name.StartsWith("<")))
          {
-//            var ty = ass.GetType("FunBasic.Library." + ti.Name);
-            var ty = ti;
+            var ty = ass.GetType("FunBasic.Library." + ti.Name);
             var ms =
                ty.GetRuntimeMethods()
                  .Where(m => 
@@ -1511,7 +1509,7 @@ namespace FunBasic.Library
       }
    }
 }
-// @@@ END_INCLUDE: C:\temp\funbasic\FunBasic.Library\_Library.cs
+// @@@ END_INCLUDE: C:\temp\GitHub\funbasic\FunBasic.Library\_Library.cs
 // ############################################################################
 // ############################################################################
 // Certains directives such as #define and // Resharper comments has to be 
@@ -1522,40 +1520,40 @@ namespace Include
 {
     static partial class MetaData
     {
-        public const string RootPath        = @"C:\temp\funbasic\FunBasic.Interactive\..\FunBasic.Library";
-        public const string IncludeDate     = @"2015-11-26T20:36:13";
+        public const string RootPath        = @"C:\temp\GitHub\funbasic\FunBasic.Interactive\..\FunBasic.Library";
+        public const string IncludeDate     = @"2015-11-29T12:53:31";
 
-        public const string Include_0       = @"C:\temp\funbasic\FunBasic.Library\Interfaces\IFlickr.cs";
-        public const string Include_1       = @"C:\temp\funbasic\FunBasic.Library\Interfaces\ISpeech.cs";
-        public const string Include_2       = @"C:\temp\funbasic\FunBasic.Library\Modules\Clock.cs";
-        public const string Include_3       = @"C:\temp\funbasic\FunBasic.Library\Modules\Controls.cs";
-        public const string Include_4       = @"C:\temp\funbasic\FunBasic.Library\Modules\Desktop.cs";
-        public const string Include_5       = @"C:\temp\funbasic\FunBasic.Library\Modules\Flickr.cs";
-        public const string Include_6       = @"C:\temp\funbasic\FunBasic.Library\Modules\GraphicsWindow.cs";
-        public const string Include_7       = @"C:\temp\funbasic\FunBasic.Library\Interfaces\IConsole.cs";
-        public const string Include_8       = @"C:\temp\funbasic\FunBasic.Library\Interfaces\IControls.cs";
-        public const string Include_9       = @"C:\temp\funbasic\FunBasic.Library\Interfaces\IDrawings.cs";
-        public const string Include_10       = @"C:\temp\funbasic\FunBasic.Library\Interfaces\IImages.cs";
-        public const string Include_11       = @"C:\temp\funbasic\FunBasic.Library\Interfaces\IKeyboard.cs";
-        public const string Include_12       = @"C:\temp\funbasic\FunBasic.Library\Modules\ImageList.cs";
-        public const string Include_13       = @"C:\temp\funbasic\FunBasic.Library\Interfaces\IMouse.cs";
-        public const string Include_14       = @"C:\temp\funbasic\FunBasic.Library\Interfaces\IShapes.cs";
-        public const string Include_15       = @"C:\temp\funbasic\FunBasic.Library\Interfaces\ISounds.cs";
-        public const string Include_16       = @"C:\temp\funbasic\FunBasic.Library\Interfaces\IStyle.cs";
-        public const string Include_17       = @"C:\temp\funbasic\FunBasic.Library\Interfaces\ISurface.cs";
-        public const string Include_18       = @"C:\temp\funbasic\FunBasic.Library\Interfaces\ITimer.cs";
-        public const string Include_19       = @"C:\temp\funbasic\FunBasic.Library\Modules\Math.cs";
-        public const string Include_20       = @"C:\temp\funbasic\FunBasic.Library\Modules\Mouse.cs";
-        public const string Include_21       = @"C:\temp\funbasic\FunBasic.Library\Modules\Program.cs";
-        public const string Include_22       = @"C:\temp\funbasic\FunBasic.Library\Modules\Shapes.cs";
-        public const string Include_23       = @"C:\temp\funbasic\FunBasic.Library\Modules\Sound.cs";
-        public const string Include_24       = @"C:\temp\funbasic\FunBasic.Library\Modules\Speech.cs";
-        public const string Include_25       = @"C:\temp\funbasic\FunBasic.Library\Modules\Stack.cs";
-        public const string Include_26       = @"C:\temp\funbasic\FunBasic.Library\Modules\Text.cs";
-        public const string Include_27       = @"C:\temp\funbasic\FunBasic.Library\Modules\TextWindow.cs";
-        public const string Include_28       = @"C:\temp\funbasic\FunBasic.Library\Modules\Timer.cs";
-        public const string Include_29       = @"C:\temp\funbasic\FunBasic.Library\Modules\Turtle.cs";
-        public const string Include_30       = @"C:\temp\funbasic\FunBasic.Library\_Library.cs";
+        public const string Include_0       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IFlickr.cs";
+        public const string Include_1       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ISpeech.cs";
+        public const string Include_2       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Clock.cs";
+        public const string Include_3       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Controls.cs";
+        public const string Include_4       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Desktop.cs";
+        public const string Include_5       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Flickr.cs";
+        public const string Include_6       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\GraphicsWindow.cs";
+        public const string Include_7       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IConsole.cs";
+        public const string Include_8       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IControls.cs";
+        public const string Include_9       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IDrawings.cs";
+        public const string Include_10       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IImages.cs";
+        public const string Include_11       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IKeyboard.cs";
+        public const string Include_12       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\ImageList.cs";
+        public const string Include_13       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IMouse.cs";
+        public const string Include_14       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IShapes.cs";
+        public const string Include_15       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ISounds.cs";
+        public const string Include_16       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\IStyle.cs";
+        public const string Include_17       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ISurface.cs";
+        public const string Include_18       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Interfaces\ITimer.cs";
+        public const string Include_19       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Math.cs";
+        public const string Include_20       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Mouse.cs";
+        public const string Include_21       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Program.cs";
+        public const string Include_22       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Shapes.cs";
+        public const string Include_23       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Sound.cs";
+        public const string Include_24       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Speech.cs";
+        public const string Include_25       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Stack.cs";
+        public const string Include_26       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Text.cs";
+        public const string Include_27       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\TextWindow.cs";
+        public const string Include_28       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Timer.cs";
+        public const string Include_29       = @"C:\temp\GitHub\funbasic\FunBasic.Library\Modules\Turtle.cs";
+        public const string Include_30       = @"C:\temp\GitHub\funbasic\FunBasic.Library\_Library.cs";
     }
 }
 // ############################################################################

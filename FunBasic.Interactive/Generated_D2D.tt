@@ -1,0 +1,69 @@
+﻿<#@ include file      ="Generated_ApiModel.ttinclude" #>
+<#@ output  extension = ".cs"                         #>
+
+namespace FunBasic.Library
+{
+  static partial class D2D
+  {
+<#
+  var prepend = "";
+
+  var grouped = model
+    .GroupBy (md => md.Prefix)
+    .OrderBy (g => g.Key.Name)
+    .ToArray ();
+
+  foreach (var g in grouped)
+  {
+    var prefix = g.Key;
+  foreach (var md in g.OrderBy (md => md.Verb).ThenBy (md => md.Noun))
+  {
+    var allParameters = prefix.PrependWith.Concat (md).ToArray ();
+#>
+    // Method: <#=md.Verb#><#=md.Noun#>
+    public static void <#=md.Verb#><#=md.Noun#> (
+<#
+  prepend = "  ";
+  foreach (var p in allParameters)
+  {
+#>
+      <#=prepend#><#=LeftJustify (p.Type, 10)#> <#=p.Name#>
+<#
+    prepend = ", ";
+  }
+#>
+      )
+    {
+      Scene.SendInput (
+        new Input.New<#=prefix.Name#> (
+<#
+  prepend = "  ";
+  foreach (var p in prefix.PrependWith)
+  {
+#>
+          <#=prepend#><#=p.Name#>
+<#
+    prepend = ", ";
+  }
+#>
+          <#=prepend#>new <#=prefix.Name#>.New<#=md.Verb#><#=md.Noun#> (
+<#
+  prepend = "  ";
+  foreach (var p in md)
+  {
+#>
+            <#=prepend#><#=p.Name#>
+<#
+    prepend = ", ";
+  }
+#>
+            )));
+    }
+
+<#
+  }
+
+  }
+#>
+  }
+}

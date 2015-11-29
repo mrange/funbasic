@@ -1,0 +1,124 @@
+﻿<#@ include file="HeaderCommon.ttinclude"#>
+
+<#+
+  class ParameterDescriptor : BaseEntity<MethodDescriptor>
+  {
+    public ParameterDescriptor (string type, string name)
+    {
+      Type = type ?? S_NoType;
+      Name = name ?? S_NoName;
+    }
+
+    public readonly string Type;
+    public readonly string Name;
+  }
+
+  static ParameterDescriptor PD (string type, string name)
+  {
+    return new ParameterDescriptor (type, name);
+  }
+
+  class Prefix
+  {
+    public Prefix (string name, ParameterDescriptor[] prependWith)
+    {
+      Name        = (name       ?? S_NoName) + "Input";
+      PrependWith = prependWith ?? new ParameterDescriptor[0];
+    }
+
+    public readonly string                Name;
+    public readonly ParameterDescriptor[] PrependWith;
+  }
+
+  class MethodDescriptor : BaseContainer<Root, ParameterDescriptor>
+  {
+    public MethodDescriptor (Prefix prefix, string verb, string noun)
+    {
+      Prefix  = prefix  ?? GlobalInput;
+      Verb    = verb    ?? S_NoName   ;
+      Noun    = noun    ?? S_NoName   ;
+    }
+ 
+    public readonly Prefix  Prefix  ;
+    public readonly string  Verb    ;
+    public readonly string  Noun    ;
+  }
+
+  static readonly Prefix GlobalInput      = new Prefix ("Global"     , new ParameterDescriptor[] {}        );
+  static readonly Prefix BitmapInput      = new Prefix ("Bitmap"     , new [] { PD ("int", "bitmapId")     });
+  static readonly Prefix BrushInput       = new Prefix ("Brush"      , new [] { PD ("int", "brushId")      });
+  static readonly Prefix VisualInput      = new Prefix ("Visual"     , new [] { PD ("int", "visualId")     });
+  static readonly Prefix TextFormatInput  = new Prefix ("TextFormat" , new [] { PD ("int", "textFormatId") });
+
+  static readonly MethodDescriptor[] model = new MethodDescriptor []
+    {
+      new MethodDescriptor  (GlobalInput      , "Set"     , "Background"      ) 
+      {
+        PD ("string", "color"),
+      },
+      new MethodDescriptor  (GlobalInput      , "Hide"    , "Window"          ) ,
+      new MethodDescriptor  (GlobalInput      , "Clear"   , "Visuals"         ) ,
+      new MethodDescriptor  (GlobalInput      , "Show"    , "Window"          ) ,
+
+      new MethodDescriptor  (BitmapInput      , "Download", "Bitmap"          )
+      {
+        PD ("string", "url"),
+      },
+
+      new MethodDescriptor  (BrushInput       , "Create"  , "SolidBrush"      )
+      {
+        PD ("string", "color"),
+      },
+
+      new MethodDescriptor  (TextFormatInput  , "Create"  , "TextFormat"      )
+      {
+        PD ("string", "fontFamily"),
+        PD ("double", "fontSize"  ),
+      },
+
+      new MethodDescriptor  (VisualInput      , "Move"    , "Visual"          )
+      {
+        PD ("double", "x"),
+        PD ("double", "y"),
+      },
+      new MethodDescriptor  (VisualInput      , "Create"  , "BitmapVisual"    )
+      {
+        PD ("int"     , "bitmapId"),
+        PD ("double"  , "opacity" ),
+        PD ("double"  , "centerX "),
+        PD ("double"  , "centerY" ),
+        PD ("double"  , "width"   ),
+        PD ("double"  , "height"  ),
+      },
+      new MethodDescriptor  (VisualInput      , "Create"  , "RectangleVisual" )
+      {
+        PD ("int"     , "fillBrushId"   ),
+        PD ("int"     , "strokeBrushId" ),
+        PD ("double"  , "strokeWidth"   ),
+        PD ("double"  , "centerX"       ),
+        PD ("double"  , "centerY"       ),
+        PD ("double"  , "width"         ),
+        PD ("double"  , "height"        ),
+      },
+      new MethodDescriptor  (VisualInput      , "Create"  , "EllipseVisual"   )
+      {
+        PD ("int"     , "fillBrushId"   ),
+        PD ("int"     , "strokeBrushId" ),
+        PD ("double"  , "strokeWidth"   ),
+        PD ("double"  , "centerX"       ),
+        PD ("double"  , "centerY"       ),
+        PD ("double"  , "width"         ),
+        PD ("double"  , "height"        ),
+      },
+      new MethodDescriptor  (VisualInput      , "Create"  , "TextVisual"      )
+      {
+        PD ("int"     , "fillBrushId"   ),
+        PD ("int"     , "textFormatId"  ),
+        PD ("double"  , "centerX"       ),
+        PD ("double"  , "centerY"       ),
+        PD ("double"  , "width"         ),
+        PD ("double"  , "height"        ),
+        PD ("string"  , "text"          ),
+      },
+    };
+#>

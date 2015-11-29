@@ -38,9 +38,9 @@ D2D.SolidBrush      (brush_stroke   , "#00FF7f")
 D2D.DownloadBitmap  (bitmap_ufo     , "http://blitzetc.ru/images/5/5a/BMax-UFO.png")
 
 D2D.Rectangle       (visual_rect    , brush_fill, brush_stroke, 3, 0, 0, 100, 100)
-D2D.Ellipse         (visual_ellipse , brush_fill, brush_stroke, 3, 200, 200, 20, 20)
-D2D.Bitmap          (visual_ufo     , bitmap_ufo, 1, 100, 300, 160, 128)
-D2D.Text            (visual_text    , textFormat_std , 1, 100, 400, 200, 100, "Direct2D + FunBasic")
+D2D.Ellipse         (visual_ellipse , brush_fill, brush_stroke, 3, 200, 200, 80, 40)
+D2D.Bitmap          (visual_ufo     , bitmap_ufo, 1, 200, 300, 160, 128)
+D2D.Text            (visual_text    , textFormat_std , 1, 200, 400, 200, 100, "Direct2D + FunBasic")
 
 x = 0
 y = 0
