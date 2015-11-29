@@ -46,6 +46,26 @@ namespace FunBasic.Library
             )));
     }
 
+    // Method: CloseWindow
+    public static void CloseWindow (
+      )
+    {
+      Scene.SendInput (
+        new Input.NewGlobalInput (
+            new GlobalInput.NewCloseWindow (
+            )));
+    }
+
+    // Method: DoNothing
+    public static void DoNothing (
+      )
+    {
+      Scene.SendInput (
+        new Input.NewGlobalInput (
+            new GlobalInput.NewDoNothing (
+            )));
+    }
+
     // Method: HideWindow
     public static void HideWindow (
       )
@@ -209,6 +229,22 @@ namespace FunBasic.Library
           , new VisualInput.NewMoveVisual (
               x
             , y
+            )));
+    }
+
+    // Method: ResizeVisual
+    public static void ResizeVisual (
+        int        visualId
+      , double     width
+      , double     height
+      )
+    {
+      Scene.SendInput (
+        new Input.NewVisualInput (
+            visualId
+          , new VisualInput.NewResizeVisual (
+              width
+            , height
             )));
     }
 

@@ -16,6 +16,10 @@
     type GlobalInput =
     // Method: ClearVisuals
     | ClearVisuals         of unit
+    // Method: CloseWindow
+    | CloseWindow          of unit
+    // Method: DoNothing
+    | DoNothing            of unit
     // Method: HideWindow
     | HideWindow           of unit
     // Method: SetBackground
@@ -38,6 +42,8 @@
     | CreateTextVisual     of fillBrushId:int*textFormatId:int*centerX:double*centerY:double*width:double*height:double*text:string
     // Method: MoveVisual
     | MoveVisual           of x:double*y:double
+    // Method: ResizeVisual
+    | ResizeVisual         of width:double*height:double
 
 
     type Input =

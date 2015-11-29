@@ -35,12 +35,10 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="D2D.cs" />
-    <Compile Include="Generated_D2D.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Generated_D2D.tt</DependentUpon>
+    <Compile Include="..\FunBasic.GeneratedCode\Generated_D2D.cs">
+      <Link>Generated_D2D.cs</Link>
     </Compile>
+    <Compile Include="D2D.cs" />
     <Compile Include="Include_LIbrary.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -49,10 +47,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Generated_D2D.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Generated_D2D.cs</LastGenOutput>
-    </Content>
     <Content Include="Include_LIbrary.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Include_LIbrary.cs</LastGenOutput>
@@ -62,7 +56,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="HeaderCommon.ttinclude" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

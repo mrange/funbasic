@@ -56,8 +56,10 @@
       {
         PD ("string", "color"),
       },
-      new MethodDescriptor  (GlobalInput      , "Hide"    , "Window"          ) ,
       new MethodDescriptor  (GlobalInput      , "Clear"   , "Visuals"         ) ,
+      new MethodDescriptor  (GlobalInput      , "Close"   , "Window"          ) ,
+      new MethodDescriptor  (GlobalInput      , "Do"      , "Nothing"         ) ,
+      new MethodDescriptor  (GlobalInput      , "Hide"    , "Window"          ) ,
       new MethodDescriptor  (GlobalInput      , "Show"    , "Window"          ) ,
 
       new MethodDescriptor  (BitmapInput      , "Download", "Bitmap"          )
@@ -81,11 +83,16 @@
         PD ("double", "x"),
         PD ("double", "y"),
       },
+      new MethodDescriptor  (VisualInput      , "Resize"  , "Visual"          )
+      {
+        PD ("double", "width"),
+        PD ("double", "height"),
+      },
       new MethodDescriptor  (VisualInput      , "Create"  , "BitmapVisual"    )
       {
         PD ("int"     , "bitmapId"),
         PD ("double"  , "opacity" ),
-        PD ("double"  , "centerX "),
+        PD ("double"  , "centerX" ),
         PD ("double"  , "centerY" ),
         PD ("double"  , "width"   ),
         PD ("double"  , "height"  ),

@@ -61,6 +61,9 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Common.fs" />
+    <Compile Include="..\FunBasic.GeneratedCode\Generated_FsModel.fs">
+      <Link>Generated_FsModel.fs</Link>
+    </Compile>
     <Compile Include="Direct2d.fs" />
     <Content Include="packages.config" />
     <Compile Include="Scene.fs" />
