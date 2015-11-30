@@ -19,12 +19,12 @@ type Visual =
   | EmptyVisual
                               // Bitmap   Opacity InterpolationMode                 Bounds
   | BitmapVisual              of BitmapId*float32*Direct2D1.BitmapInterpolationMode*RectangleF
-                              // Width   Stroke  Fill    Bounds
-  | EllipseVisual             of float32*BrushId*BrushId*Direct2D1.Ellipse
-                              // Width   Stroke  Fill    Bounds
-  | RectangleVisual           of float32*BrushId*BrushId*RectangleF
-                              // Fill    TextFormat   Bounds     Text
-  | TextVisual                of BrushId*TextFormatId*RectangleF*string
+                              // Width   Stroke  Fill    Bounds            BrushTransform
+  | EllipseVisual             of float32*BrushId*BrushId*Direct2D1.Ellipse*Matrix3x2
+                              // Width   Stroke  Fill    Bounds     BrushTransform
+  | RectangleVisual           of float32*BrushId*BrushId*RectangleF*Matrix3x2
+                              // Fill    TextFormat   Text   Bounds     BrushTransform
+  | TextVisual                of BrushId*TextFormatId*string*RectangleF*Matrix3x2
 
 let rec renderVisual (v : Visual) (d : Device) (rt : Direct2D1.RenderTarget) : unit =
   match v with
@@ -34,24 +34,29 @@ let rec renderVisual (v : Visual) (d : Device) (rt : Direct2D1.RenderTarget) : u
     let bb = d.GetBitmap b
     if bb <> null && o > 0.0f then
       rt.DrawBitmap (bb, r, o, bim)
-  | EllipseVisual (sw, s, f, e) ->
+  | EllipseVisual (sw, s, f, e, bt) ->
     let fb = d.GetBrush f
     let sb = d.GetBrush s
     if fb.IsVisible then
+      fb.Transform <- bt
       rt.FillEllipse (e, fb)
     if sb.IsVisible && sw > 0.0f then
+      sb.Transform <- bt
       rt.DrawEllipse (e, sb, sw)
-  | RectangleVisual (sw, s, f, r) ->
+  | RectangleVisual (sw, s, f, r, bt) ->
     let fb = d.GetBrush f
     let sb = d.GetBrush s
     if fb.IsVisible then
+      fb.Transform <- bt
       rt.FillRectangle (r, fb)
     if sb.IsVisible && sw > 0.0f then
+      sb.Transform <- bt
       rt.DrawRectangle (r, sb, sw)
-  | TextVisual (f, tf, r, t) ->
+  | TextVisual (f, tf, t, r, bt) ->
     let fb  = d.GetBrush f
     let tfd = d.GetTextFormat tf
     if fb.IsVisible && tfd <> null then
+      fb.Transform <- bt
       rt.DrawText (t, tfd, r, fb)
 
 let onKeyUp _ =
@@ -62,22 +67,22 @@ let regexExtendMode =
         , RegexOptions.IgnoreCase ||| RegexOptions.Compiled ||| RegexOptions.CultureInvariant
         )
 
+let parseExtendMode (em : string) : Direct2D1.ExtendMode =
+  let m = regexExtendMode.Match em
+  if m.Groups.["Clamp"].Success then
+    Direct2D1.ExtendMode.Clamp
+  elif m.Groups.["Mirror"].Success then
+    Direct2D1.ExtendMode.Mirror
+  elif m.Groups.["Wrap"].Success then
+    Direct2D1.ExtendMode.Wrap
+  else
+    Direct2D1.ExtendMode.Clamp
+
 let createRenderer (onRefresh :  unit -> unit) =
   let inline createBitmapId i     = i*1<BitmapMeasure>
   let inline createBrushId i      = i*1<BrushMeasure>
   let inline createTextFormatId i = i*1<TextFormatMeasure>
   let inline createVisualId i     = i*1<VisualMeasure>
-
-  let parseExtendMode (em : string) : Direct2D1.ExtendMode =
-    let m = regexExtendMode.Match em
-    if m.Groups.["Clamp"].Success then
-      Direct2D1.ExtendMode.Clamp
-    elif m.Groups.["Mirror"].Success then
-      Direct2D1.ExtendMode.Mirror
-    elif m.Groups.["Wrap"].Success then
-      Direct2D1.ExtendMode.Wrap
-    else
-      Direct2D1.ExtendMode.Clamp
 
   let inline v (x : float) (y : float) =
     Vector2 (float32 x, float32 y)
@@ -96,6 +101,12 @@ let createRenderer (onRefresh :  unit -> unit) =
     ellipsef (float32 x) (float32 y) e.RadiusX e.RadiusY
   let inline eresize2 (w : float) (h : float) (e : Direct2D1.Ellipse) =
     ellipsef e.Point.X e.Point.Y (float32 w / 2.0F) (float32 h / 2.0F)
+
+  let inline btFromRect (r : RectangleF) : Matrix3x2 =
+    matrix32 r.Width 0.0F r.X 0.0F r.Height r.Y
+
+  let inline btFromEllipse (e : Direct2D1.Ellipse) : Matrix3x2 =
+    matrix32 (2.0F * e.RadiusX) 0.0F (e.Point.X - e.RadiusX) 0.0F (2.0F * e.RadiusY) (e.Point.Y - e.RadiusY)
 
   let input     = ConcurrentQueue<Input> ()
   let visuals   = Dictionary<VisualId, Visual> ()
@@ -118,11 +129,17 @@ let createRenderer (onRefresh :  unit -> unit) =
     | CreateBitmapVisual (bitmapId, opacity, centerX, centerY, width, height) ->
       BitmapVisual (createBitmapId bitmapId, float32 opacity, Direct2D1.BitmapInterpolationMode.NearestNeighbor, rcreate centerX centerY width height)
     | CreateEllipseVisual (fillBrushId, strokeBrushId, strokeWidth, centerX, centerY, width, height) ->
-      EllipseVisual (float32 strokeWidth, createBrushId strokeBrushId, createBrushId fillBrushId, ecreate centerX centerY width height)
+      let e   = ecreate centerX centerY width height
+      let bt  = btFromEllipse e
+      EllipseVisual (float32 strokeWidth, createBrushId strokeBrushId, createBrushId fillBrushId, e, bt)
     | CreateRectangleVisual (fillBrushId, strokeBrushId, strokeWidth, centerX, centerY, width, height) ->
-      RectangleVisual (float32 strokeWidth, createBrushId strokeBrushId, createBrushId fillBrushId, rcreate centerX centerY width height)
+      let r   = rcreate centerX centerY width height
+      let bt  = btFromRect r
+      RectangleVisual (float32 strokeWidth, createBrushId strokeBrushId, createBrushId fillBrushId, r, bt)
     | CreateTextVisual (fillBrushId, textFormatId, centerX, centerY, width, height, text) ->
-      TextVisual (createBrushId fillBrushId, createTextFormatId textFormatId, rcreate centerX centerY width height, text)
+      let r   = rcreate centerX centerY width height
+      let bt  = btFromRect r
+      TextVisual (createBrushId fillBrushId, createTextFormatId textFormatId, text, r, bt)
 
   let updateVisual k v u =
     match u with
@@ -132,24 +149,36 @@ let createRenderer (onRefresh :  unit -> unit) =
         EmptyVisual
       | BitmapVisual  (bid, o, bim, r) ->
         BitmapVisual  (bid, o, bim, rmove2 x y r)
-      | EllipseVisual (sw, s, f, r) ->
-        EllipseVisual (sw, s, f, emove2 x y r)
-      | RectangleVisual (sw, s, f, r) ->
-        RectangleVisual (sw, s, f, rmove2 x y r)
-      | TextVisual (bd, tfd, r, t) ->
-        TextVisual (bd, tfd, rmove2 x y r, t)
+      | EllipseVisual (sw, s, f, e, _) ->
+        let ne  = emove2 x y e
+        let nbt = btFromEllipse ne
+        EllipseVisual (sw, s, f, ne, nbt)
+      | RectangleVisual (sw, s, f, r, _) ->
+        let nr  = rmove2 x y r
+        let nbt = btFromRect nr
+        RectangleVisual (sw, s, f, nr, nbt)
+      | TextVisual (bd, tfd, t, r, _) ->
+        let nr  = rmove2 x y r
+        let nbt  = btFromRect nr
+        TextVisual (bd, tfd, t, nr, nbt)
     | ResizeVisual (w, h) ->
       match v with
       | EmptyVisual ->
         EmptyVisual
       | BitmapVisual  (bid, o, bim, r) ->
         BitmapVisual  (bid, o, bim, rresize2 w h r)
-      | EllipseVisual (sw, s, f, r) ->
-        EllipseVisual (sw, s, f, eresize2 w h r)
-      | RectangleVisual (sw, s, f, r) ->
-        RectangleVisual (sw, s, f, rresize2 w h r)
-      | TextVisual (bd, tfd, r, t) ->
-        TextVisual (bd, tfd, rresize2 w h r, t)
+      | EllipseVisual (sw, s, f, r, _) ->
+        let ne  = eresize2 w h r
+        let nbt = btFromEllipse ne
+        EllipseVisual (sw, s, f, ne, nbt)
+      | RectangleVisual (sw, s, f, r, _) ->
+        let nr  = rresize2 w h r
+        let nbt = btFromRect nr
+        RectangleVisual (sw, s, f, nr , nbt)
+      | TextVisual (bd, tfd, t, r, _) ->
+        let nr  = rresize2 w h r
+        let nbt = btFromRect nr
+        TextVisual (bd, tfd, t, nr, nbt)
     | _ ->
       createVisual k u
 

@@ -111,10 +111,11 @@ type ActionDisposable(a : unit -> unit) =
 
 let onExit (a : unit -> unit) : IDisposable = upcast new ActionDisposable (a)
 
-let inline v2 x y             = Vector2 (x, y)
-let inline size2 w h          = Size2F (w, h)
-let inline rectf x y w h      = RectangleF (x, y, w, h)
-let inline ellipsef x y rx ry = Direct2D1.Ellipse (v2 x y, rx, ry)
+let inline v2 x y                           = Vector2 (x, y)
+let inline size2 w h                        = Size2F (w, h)
+let inline rectf x y w h                    = RectangleF (x, y, w, h)
+let inline ellipsef x y rx ry               = Direct2D1.Ellipse (v2 x y, rx, ry)
+let inline matrix32 m11 m21 m31 m12 m22 m32 = Matrix3x2 (m11, m12, m21, m22, m31, m32)
 
 let parseColor (color : string) : Color4 =
   let red = Color.Red
