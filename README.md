@@ -11,8 +11,8 @@ So it's still in a bit rough shape, I cheated quite much just to get it run
 on desktop. FunBasic.Runner.sln is the desktop solution I am fooling around in.
 `fbi` is an embryo for a console application that runs FunBasic sources.
 
-Anyway, I fooled around with Direct2D and FunBasic before because I thought the
-visuals in FunBasic was way too slow. This is basically a port of that work
+Anyway, I fooled around with Direct2D and SmallBasic before because I thought the
+visuals in SmallBasic was way too slow. This is basically a port of that work
 rewritten in F#. Direct2D are in many ways great as it has many high-level
 graphic primitives (like brushes) while giving good performance.
 
