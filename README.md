@@ -4,6 +4,8 @@ The real repository for funbasic is [here](https://bitbucket.org/ptrelford/funba
 
 This place is just for my experiments and tweaks of funbasic
 
+![FunBasic! now with extra lame graphics](https://raw.githubusercontent.com/mrange/funbasic/master/images/fb.PNG)
+
 Aimed at @ptrelford
 ===================
 
