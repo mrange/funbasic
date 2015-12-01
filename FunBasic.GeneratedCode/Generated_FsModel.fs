@@ -64,6 +64,8 @@
   | MoveVisualToBottom   
   // Method: MoveVisualToTop 
   | MoveVisualToTop      
+  // Method: RemoveVisual 
+  | RemoveVisual         
   // Method: ResizeVisual (width, height)
   | ResizeVisual         of width:double*height:double
 

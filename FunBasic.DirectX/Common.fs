@@ -38,7 +38,7 @@ let dispose (d : IDisposable) =
     | e ->
       traceException e
 
-let inline clamp v b e = 
+let inline clamp v b e =
   if v > e then e
   elif v < b then b
   else v

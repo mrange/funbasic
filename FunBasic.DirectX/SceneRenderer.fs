@@ -93,7 +93,7 @@ let createRenderer (onRefresh :  unit -> unit) =
     rectf (float32 (x - w / 2.0)) (float32 (y - h / 2.0)) (float32 w) (float32 h)
 
   let inline rmove2 (x : float) (y : float) (r : RectangleF) =
-    rectf (float32 x - r.Width / 2.0F) (float32 x - r.Height / 2.0F) r.Width r.Height
+    rectf (float32 x - r.Width / 2.0F) (float32 y - r.Height / 2.0F) r.Width r.Height
   let inline rresize2 (w : float) (h : float) (r : RectangleF) =
     rectf r.X r.Y (float32 w) (float32 h)
 
@@ -116,6 +116,8 @@ let createRenderer (onRefresh :  unit -> unit) =
     match u with
     | CloneVisual (cloneVisualId) ->
       visuals.GetValue (createVisualId cloneVisualId) EmptyVisual
+    // Remove during create results in an empty visual
+    | RemoveVisual
     // Not supported on creation
     | MoveVisual _
     | ResizeVisual _
@@ -139,6 +141,8 @@ let createRenderer (onRefresh :  unit -> unit) =
 
   let updateVisual k v u =
     match u with
+    | RemoveVisual ->
+      EmptyVisual
     | MoveVisual (x, y) ->
       match v with
       | EmptyVisual ->
@@ -242,7 +246,7 @@ let createRenderer (onRefresh :  unit -> unit) =
 
     rt.Clear <| Nullable<_> !background
 
-    visuals.VisitAllValues <| fun i v -> 
+    visuals.VisitAllValues <| fun i v ->
       renderVisual v d rt
 
     cont

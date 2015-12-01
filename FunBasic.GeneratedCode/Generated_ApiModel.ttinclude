@@ -115,6 +115,7 @@
         PD ("double", "fontSize"  ),
       },
 
+      new MethodDescriptor  (VisualInput      , "Remove"        , "Visual"              ),
       new MethodDescriptor  (VisualInput      , "Clone"         , "Visual"              )
       {
         PD ("int"   , "cloneVisualId" ),

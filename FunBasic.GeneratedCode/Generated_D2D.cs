@@ -367,6 +367,19 @@ namespace FunBasic.Library
         );
     }
 
+    // Method: RemoveVisual (visualId)
+    public static void RemoveVisual (
+        int        visualId
+      )
+    {
+      Scene.SendInput (
+        Input.NewVisualInput (
+            visualId
+          , VisualInput.RemoveVisual
+          )
+        );
+    }
+
     // Method: ResizeVisual (visualId, width, height)
     public static void ResizeVisual (
         int        visualId
