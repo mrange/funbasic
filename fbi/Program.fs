@@ -73,8 +73,6 @@ D2D.WaitForDownloadsToComplete  ()
 
 ' Create a rectangle visual using the linear gradient brush
 D2D.CreateRectangleVisual       (visual_rect    , brush_linearfill, 0, 0, 0, 0, 400, 40)
-' Create a ellipse visual using the radial gradient brush
-D2D.CreateEllipseVisual         (visual_ellipse , brush_radialfill, brush_stroke, 3, 200, 200, 100, 100)
 ' Create a text visual
 D2D.CreateTextVisual            (visual_text    , textFormat_std , 1, 200, 400, 200, 100, "Direct2D + FunBasic")
 ' Create a bitmap visual of the downloaded UFO
@@ -83,6 +81,15 @@ D2D.CreateBitmapVisual          (visual_ufo1    , bitmap_ufo, 1, 200, 300, 160, 
 D2D.CreateBitmapVisual          (visual_ufo2    , bitmap_ufo, 0.75, 400, 300, 160, 128)
 ' Create a bitmap visual of the downloaded UFO (transparent)
 D2D.CreateBitmapVisual          (visual_ufo3    , bitmap_ufo, 0.5, 600, 300, 160, 128)
+' Create a ellipse visual using the radial gradient brush
+D2D.CreateEllipseVisual         (visual_ellipse , brush_radialfill, brush_stroke, 3, 200, 200, 125, 125)
+
+' Make sure the rect visual is rendered on top of all other visuals
+'   Usually the order of visual is decided by the creation order
+D2D.MoveVisualToTop             (visual_rect)
+
+' Make sure the ellipse visual is rendered below all other visuals
+D2D.MoveVisualToBottom          (visual_ellipse)
 
 x = 0
 y = 0

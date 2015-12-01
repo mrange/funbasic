@@ -341,6 +341,32 @@ namespace FunBasic.Library
         );
     }
 
+    // Method: MoveVisualToBottom (visualId)
+    public static void MoveVisualToBottom (
+        int        visualId
+      )
+    {
+      Scene.SendInput (
+        Input.NewVisualInput (
+            visualId
+          , VisualInput.MoveVisualToBottom
+          )
+        );
+    }
+
+    // Method: MoveVisualToTop (visualId)
+    public static void MoveVisualToTop (
+        int        visualId
+      )
+    {
+      Scene.SendInput (
+        Input.NewVisualInput (
+            visualId
+          , VisualInput.MoveVisualToTop
+          )
+        );
+    }
+
     // Method: ResizeVisual (visualId, width, height)
     public static void ResizeVisual (
         int        visualId

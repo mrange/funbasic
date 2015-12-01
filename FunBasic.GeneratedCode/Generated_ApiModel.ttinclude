@@ -60,32 +60,32 @@
 
   static readonly MethodDescriptor[] model = new MethodDescriptor []
     {
-      new MethodDescriptor  (InternalInput    , "Do"      , "Nothing"             ) ,
-      new MethodDescriptor  (InternalInput    , "Discard" , "Window"              ) ,
-      new MethodDescriptor  (InternalInput    , "Create"  , "BitmapFromBits"      )
+      new MethodDescriptor  (InternalInput    , "Do"            , "Nothing"             ) ,
+      new MethodDescriptor  (InternalInput    , "Discard"       , "Window"              ) ,
+      new MethodDescriptor  (InternalInput    , "Create"        , "BitmapFromBits"      )
       {
         PD ("int"     , "bitmapId"),
         PD ("byte[]"  , "bits"    ),
       },
 
-      new MethodDescriptor  (GlobalInput      , "Set"     , "Background"          )
+      new MethodDescriptor  (GlobalInput      , "Set"           , "Background"          )
       {
         PD ("string", "color"),
       },
-      new MethodDescriptor  (GlobalInput      , "Clear"   , "Visuals"             ) ,
-      new MethodDescriptor  (GlobalInput      , "Hide"    , "Window"              ) ,
-      new MethodDescriptor  (GlobalInput      , "Show"    , "Window"              ) ,
+      new MethodDescriptor  (GlobalInput      , "Clear"         , "Visuals"             ) ,
+      new MethodDescriptor  (GlobalInput      , "Hide"          , "Window"              ) ,
+      new MethodDescriptor  (GlobalInput      , "Show"          , "Window"              ) ,
 
-      new MethodDescriptor  (BitmapInput      , "Download", "Bitmap"              )
+      new MethodDescriptor  (BitmapInput      , "Download"      , "Bitmap"              )
       {
         PD ("string", "uri"),
       },
 
-      new MethodDescriptor  (BrushInput       , "Create"  , "SolidBrush"          )
+      new MethodDescriptor  (BrushInput       , "Create"        , "SolidBrush"          )
       {
         PD ("string", "color"),
       },
-      new MethodDescriptor  (BrushInput       , "Create"  , "LinearGradientBrush" )
+      new MethodDescriptor  (BrushInput       , "Create"        , "LinearGradientBrush" )
       {
         PD ("double", "startX"    ),
         PD ("double", "startY"    ),
@@ -93,7 +93,7 @@
         PD ("double", "endY"      ),
         PD ("string", "extendMode"),
       },
-      new MethodDescriptor  (BrushInput       , "Create"  , "RadialGradientBrush" )
+      new MethodDescriptor  (BrushInput       , "Create"        , "RadialGradientBrush" )
       {
         PD ("double", "centerX"   ),
         PD ("double", "centerY"   ),
@@ -103,33 +103,35 @@
         PD ("double", "offsetY"   ),
         PD ("string", "extendMode"),
       },
-      new MethodDescriptor  (BrushInput       , "Create"  , "GradientStopForBrush" )
+      new MethodDescriptor  (BrushInput       , "Create"        , "GradientStopForBrush" )
       {
         PD ("string", "color"     ),
         PD ("double", "offset"    ),
       },
 
-      new MethodDescriptor  (TextFormatInput  , "Create"  , "TextFormat"          )
+      new MethodDescriptor  (TextFormatInput  , "Create"        , "TextFormat"          )
       {
         PD ("string", "fontFamily"),
         PD ("double", "fontSize"  ),
       },
 
-      new MethodDescriptor  (VisualInput      , "Clone"   , "Visual"              )
+      new MethodDescriptor  (VisualInput      , "Clone"         , "Visual"              )
       {
         PD ("int"   , "cloneVisualId" ),
       },
-      new MethodDescriptor  (VisualInput      , "Move"    , "Visual"              )
+      new MethodDescriptor  (VisualInput      , "Move"          , "Visual"              )
       {
         PD ("double", "x"),
         PD ("double", "y"),
       },
-      new MethodDescriptor  (VisualInput      , "Resize"  , "Visual"              )
+      new MethodDescriptor  (VisualInput      , "Move"          , "VisualToTop"         ),
+      new MethodDescriptor  (VisualInput      , "Move"          , "VisualToBottom"      ),
+      new MethodDescriptor  (VisualInput      , "Resize"        , "Visual"              )
       {
         PD ("double", "width"),
         PD ("double", "height"),
       },
-      new MethodDescriptor  (VisualInput      , "Create"  , "BitmapVisual"        )
+      new MethodDescriptor  (VisualInput      , "Create"        , "BitmapVisual"        )
       {
         PD ("int"     , "bitmapId"),
         PD ("double"  , "opacity" ),
@@ -138,7 +140,7 @@
         PD ("double"  , "width"   ),
         PD ("double"  , "height"  ),
       },
-      new MethodDescriptor  (VisualInput      , "Create"  , "RectangleVisual"     )
+      new MethodDescriptor  (VisualInput      , "Create"        , "RectangleVisual"     )
       {
         PD ("int"     , "fillBrushId"   ),
         PD ("int"     , "strokeBrushId" ),
@@ -148,7 +150,7 @@
         PD ("double"  , "width"         ),
         PD ("double"  , "height"        ),
       },
-      new MethodDescriptor  (VisualInput      , "Create"  , "EllipseVisual"       )
+      new MethodDescriptor  (VisualInput      , "Create"        , "EllipseVisual"       )
       {
         PD ("int"     , "fillBrushId"   ),
         PD ("int"     , "strokeBrushId" ),
@@ -158,7 +160,7 @@
         PD ("double"  , "width"         ),
         PD ("double"  , "height"        ),
       },
-      new MethodDescriptor  (VisualInput      , "Create"  , "TextVisual"          )
+      new MethodDescriptor  (VisualInput      , "Create"        , "TextVisual"          )
       {
         PD ("int"     , "fillBrushId"   ),
         PD ("int"     , "textFormatId"  ),

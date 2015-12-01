@@ -60,6 +60,10 @@
   | CreateTextVisual     of fillBrushId:int*textFormatId:int*centerX:double*centerY:double*width:double*height:double*text:string
   // Method: MoveVisual (x, y)
   | MoveVisual           of x:double*y:double
+  // Method: MoveVisualToBottom 
+  | MoveVisualToBottom   
+  // Method: MoveVisualToTop 
+  | MoveVisualToTop      
   // Method: ResizeVisual (width, height)
   | ResizeVisual         of width:double*height:double
 

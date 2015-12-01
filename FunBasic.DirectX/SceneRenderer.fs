@@ -109,22 +109,18 @@ let createRenderer (onRefresh :  unit -> unit) =
     matrix32 (2.0F * e.RadiusX) 0.0F (e.Point.X - e.RadiusX) 0.0F (2.0F * e.RadiusY) (e.Point.Y - e.RadiusY)
 
   let input     = ConcurrentQueue<Input> ()
-  let visuals   = Dictionary<VisualId, Visual> ()
+  let visuals   = OrderedDictionary<VisualId, Visual> ()
   let background= ref <| Color.Black.ToColor4 ()
 
   let createVisual k u =
     match u with
     | CloneVisual (cloneVisualId) ->
-      let ok, visual = visuals.TryGetValue (createVisualId cloneVisualId)
-      if ok then
-        visual
-      else
-        EmptyVisual
-    | MoveVisual _ ->
-      // Not supported on creation
-      EmptyVisual
-    | ResizeVisual _ ->
-      // Not supported on creation
+      visuals.GetValue (createVisualId cloneVisualId) EmptyVisual
+    // Not supported on creation
+    | MoveVisual _
+    | ResizeVisual _
+    | MoveVisualToBottom
+    | MoveVisualToTop     ->
       EmptyVisual
     | CreateBitmapVisual (bitmapId, opacity, centerX, centerY, width, height) ->
       BitmapVisual (createBitmapId bitmapId, float32 opacity, Direct2D1.BitmapInterpolationMode.NearestNeighbor, rcreate centerX centerY width height)
@@ -179,6 +175,10 @@ let createRenderer (onRefresh :  unit -> unit) =
         let nr  = rresize2 w h r
         let nbt = btFromRect nr
         TextVisual (bd, tfd, t, nr, nbt)
+    | MoveVisualToBottom ->
+      visuals.Move k -10000 EmptyVisual
+    | MoveVisualToTop     ->
+      visuals.Move k 10000 EmptyVisual
     | _ ->
       createVisual k u
 
@@ -236,15 +236,14 @@ let createRenderer (onRefresh :  unit -> unit) =
         let tfid = createTextFormatId tfid
         d.ReserveTextFormat tfid (SimpleTextFormat (fontFamily, float32 fontSize))
       | VisualInput (vid, vi) ->
-        let vid = createVisualId vid
-        ignore <| createOrUpdate vid vi createVisual updateVisual visuals
+        ignore <| visuals.CreateOrUpdate (createVisualId vid) vi createVisual updateVisual
 
     onRefresh ()
 
     rt.Clear <| Nullable<_> !background
 
-    for kv in visuals do
-      renderVisual kv.Value d rt
+    visuals.VisitAllValues <| fun i v -> 
+      renderVisual v d rt
 
     cont
 

@@ -19,14 +19,6 @@ type BrushId      = int<BrushMeasure>
 type TextFormatId = int<TextFormatMeasure>
 type VisualId     = int<VisualMeasure>
 
-let inline refEqual (l : 'T) (r : 'T) : bool = Object.ReferenceEquals (l, r)
-
-let addToArray (v : 'T) (vs : 'T []) : 'T [] =
-  let mutable nvs = vs
-  System.Array.Resize (&nvs, vs.Length + 1)
-  nvs.[vs.Length] <- v
-  nvs
-
 let traceException (e : #Exception) : unit =
   printfn "EXCEPTION: %s" e.Message
 
@@ -46,17 +38,18 @@ let dispose (d : IDisposable) =
     | e ->
       traceException e
 
-let createOrUpdate (k : 'K) (u : 'U) (creator : 'K -> 'U -> 'V) (updater : 'K -> 'V -> 'U -> 'V) (d : IDictionary<'K, 'V>): 'V =
-  let ok, v = d.TryGetValue k
-  if ok then
-    let nv = updater k v u
-    if not <| refEqual nv v then
-      d.[k] <- nv
-    nv
-  else
-    let nv = creator k u
-    d.[k] <- nv
-    nv
+let inline clamp v b e = 
+  if v > e then e
+  elif v < b then b
+  else v
+
+let inline refEqual (l : 'T) (r : 'T) : bool = Object.ReferenceEquals (l, r)
+
+let inline addToArray (v : 'T) (vs : 'T []) : 'T [] =
+  let mutable nvs = vs
+  System.Array.Resize (&nvs, vs.Length + 1)
+  nvs.[vs.Length] <- v
+  nvs
 
 let disposeResourceDictionary (d : IDictionary<_, _*#IDisposable>) : unit =
   try
@@ -203,3 +196,78 @@ type Direct2D1.Brush with
       false
     else
       x.Opacity > 0.0f
+
+[<ReferenceEquality>]
+[<NoComparison>]
+type Payload<'V> =
+  {
+    mutable Value : 'V
+  }
+
+  static member New v = { Value = v }
+
+type OrderedDictionary<'K, 'V when 'K : equality>() =
+  let kvs = Dictionary<'K, Payload<'V>> ()
+  let vs  = ResizeArray<Payload<'V>> ()
+
+  let move f t =
+    let e = vs.Count - 1
+    let f = clamp f 0 e
+    let t = clamp t 0 e
+    if f < t then
+      let s = vs.[f]
+      for i = f to (t - 1) do
+        vs.[i] <- vs.[i + 1]
+      vs.[t] <- s
+    elif f > t then
+      let s = vs.[f]
+      for i = f downto (t + 1) do
+        vs.[i] <- vs.[i - 1]
+      vs.[t] <- s
+    else
+      ()
+
+  member x.Clear () =
+    kvs.Clear ()
+    vs.Clear ()
+
+  member x.GetValue (k : 'K) (dv : 'V) : 'V =
+    let ok, p = kvs.TryGetValue k
+    if ok then
+      p.Value
+    else
+      dv
+
+  member x.CreateOrUpdate (k : 'K) (u : 'U) (creator : 'K -> 'U -> 'V) (updater : 'K -> 'V -> 'U -> 'V) : 'V =
+    let ok, p = kvs.TryGetValue k
+    if ok then
+      let v = p.Value
+      let nv = updater k v u
+      p.Value <- nv
+      nv
+    else
+      let nv = creator k u
+      let np = Payload<_>.New nv
+      kvs.[k] <- np
+      vs.Add np
+      nv
+
+  member x.Move (k : 'K) (o : int) (dv : 'V) : 'V =
+    let ok, p = kvs.TryGetValue k
+    if ok && o = 0 then
+      p.Value
+    elif ok then
+      let c = vs.Count
+      let f = vs.IndexOf p
+      if f > -1 then
+        move f (f + o)
+
+      p.Value
+    else
+      dv
+
+  member x.VisitAllValues (visitor : int -> 'V -> unit) : unit =
+    let e = vs.Count - 1
+    for i = 0 to e do
+      let p = vs.[i]
+      visitor i p.Value

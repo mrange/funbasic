@@ -237,7 +237,6 @@ type Device (dir : DeviceIndependentResources, form : Windows.RenderForm) =
     let bmps =
       bitmaps
       |> stripResource
-
     let bs =
       brushes
       |> stripResource
