@@ -56,9 +56,9 @@ brush_radialfill= 0004
 visual_rect     = 0001
 visual_ellipse  = 0002
 visual_text     = 0003
-visual_ufo1     = 0004
-visual_ufo2     = 0005
-visual_ufo3     = 0006
+visual_ufos     = 1000
+
+number_of_ufos  = 3
 
 ' Sets the background to a darkblue (#rgb)
 D2D.SetBackground               ("#003")
@@ -70,7 +70,7 @@ D2D.DownloadBitmap              (bitmap_ufo       , "http://blitzetc.ru/images/5
 
 ' Create a text format that will be used to render text
 '   If no text format can be found a default will be used
-D2D.CreateTextFormat            (textFormat_std   , "Tahoma", 24)
+D2D.CreateTextFormat            (textFormat_std   , "Tahoma", 48)
 
 ' Create some solid brushes
 D2D.CreateSolidBrush            (brush_fill       , "#0FF")
@@ -81,43 +81,67 @@ D2D.CreateSolidBrush            (brush_stroke     , "#00FF7f")
 D2D.CreateRadialGradientBrush   (brush_radialfill , 0.5   , 0.5   , 1,      1,      -0.25 , -0.25,  "clamp")
 ' Create a gradient stop                            Color   Offset
 D2D.CreateGradientStopForBrush  (brush_radialfill , "#fff", 0)
-D2D.CreateGradientStopForBrush  (brush_radialfill , "#000", 1)
+D2D.CreateGradientStopForBrush  (brush_radialfill , "#07f", 0.15)
+D2D.CreateGradientStopForBrush  (brush_radialfill , "#004", 1)
 
 ' Create a linear brush to make some nice looking bars
 '                                                   StartX  StartY  EndX  EndY ExtendMode
 D2D.CreateLinearGradientBrush   (brush_linearfill , 0     , 0     , 0   , 1,  "clamp")
 ' Create a gradient stop                            Color   Offset
-D2D.CreateGradientStopForBrush  (brush_linearfill , "#400", 0)
-D2D.CreateGradientStopForBrush  (brush_linearfill , "#A00", 0.25)
-D2D.CreateGradientStopForBrush  (brush_linearfill , "#F00", 0.5)
-D2D.CreateGradientStopForBrush  (brush_linearfill , "#A00", 0.75)
-D2D.CreateGradientStopForBrush  (brush_linearfill , "#400", 1)
+D2D.CreateGradientStopForBrush  (brush_linearfill , "#024", 0)
+D2D.CreateGradientStopForBrush  (brush_linearfill , "#05A", 0.25)
+D2D.CreateGradientStopForBrush  (brush_linearfill , "#08F", 0.5)
+D2D.CreateGradientStopForBrush  (brush_linearfill , "#05A", 0.75)
+D2D.CreateGradientStopForBrush  (brush_linearfill , "#024", 1)
 
 ' Wait for all downloads to complete
 D2D.WaitForDownloadsToComplete  ()
 
-' Create a rectangle visual using the linear gradient brush
-D2D.CreateRectangleVisual       (visual_rect    , brush_linearfill, 0, 0, 0, 0, 400, 40)
-' Create a ellipse visual using the radial gradient brush
-D2D.CreateEllipseVisual         (visual_ellipse , brush_radialfill, brush_stroke, 3, 200, 200, 100, 100)
 ' Create a text visual
-D2D.CreateTextVisual            (visual_text    , textFormat_std , 1, 200, 400, 200, 100, "Direct2D + FunBasic")
+D2D.CreateTextVisual            (visual_text    , textFormat_std , 1, 400, 400, 800, 60, "Direct2D + FunBasic")
+' Create a rectangle visual using the linear gradient brush
+D2D.CreateRectangleVisual       (visual_rect    , brush_linearfill, 0, 0, 400, 0, 800, 60)
+' Create a ellipse visual using the radial gradient brush
+D2D.CreateEllipseVisual         (visual_ellipse , brush_radialfill, brush_stroke, 3, 200, 200, 125, 125)
 ' Create a bitmap visual of the downloaded UFO
-D2D.CreateBitmapVisual          (visual_ufo1    , bitmap_ufo, 1, 200, 300, 160, 128)
-' Create a bitmap visual of the downloaded UFO (transparent)
-D2D.CreateBitmapVisual          (visual_ufo2    , bitmap_ufo, 0.75, 400, 300, 160, 128)
-' Create a bitmap visual of the downloaded UFO (transparent)
-D2D.CreateBitmapVisual          (visual_ufo3    , bitmap_ufo, 0.5, 600, 300, 160, 128)
+D2D.CreateBitmapVisual          (visual_ufos + 0, bitmap_ufo, 1, 200, 300, 160, 128)
+' Clone the ufo visual a few times
+For i = 1 To number_of_ufos
+  D2D.CloneVisual (visual_ufos + i, visual_ufos + 0)
+EndFor
 
+' Make sure the ellipse visual is rendered on below all other visuals
+'   Usually the order of visual is decided by the creation order
+D2D.MoveVisualToBottom          (visual_ellipse)
+
+' Make sure the text & rect visual are rendered below all other visuals
+D2D.MoveVisualToTop             (visual_rect)
+D2D.MoveVisualToTop             (visual_text)
+
+i = 0
 x = 0
 y = 0
 
 While D2D.LastKey = ""
-  x = x + 2
-  y = y + 1
+  i = i + 1
+  x = i * 2
+  y = i * 1
+  r = i * 0.03
 
-  ' Move the rectangle
-  D2D.MoveVisual (visual_rect, x, y)
+
+  rx = 550.0 + 100.0*Math.Sin (3*ri)
+  ry = 200.0 + 100.0*Math.Cos (ri)
+  ' Move the rectangle & text
+  D2D.MoveVisual (visual_rect, 400, ry)
+  D2D.MoveVisual (visual_text, rx, ry)
+
+  ' Move the ufos
+  For ii = 0 To number_of_ufos
+    ri = r + ii
+    ux = 200.0 + 100.0*Math.Sin (ri)
+    uy = 200.0 + 100.0*Math.Cos (ri)
+    D2D.MoveVisual (visual_ufos + ii, ux, uy)
+  EndFor
 
   ' Wait for screen refresh
   D2D.WaitForRefresh ()
