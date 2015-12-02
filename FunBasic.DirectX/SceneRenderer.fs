@@ -199,6 +199,7 @@ let createRenderer (onRefresh :  unit -> unit) =
     | MoveVisualToTop     ->
       visuals.Move k 10000 EmptyVisual
     | _ ->
+      // TODO: Preserve gradient stops
       createVisual k u
 
   let doNothing = InternalInput DoNothing

@@ -112,7 +112,7 @@
         PD ("double", "radiusX"   , "1.0"       ),
         PD ("double", "radiusY"   , "1.0"       ),
         PD ("double", "offsetX"   , "-0.25"     ),
-        PD ("double", "offsetY"   , "0.25"      ),
+        PD ("double", "offsetY"   , "-0.25"     ),
         PD ("string", "extendMode", "\"mirror\""),
       },
       new MethodDescriptor  (BrushInput       , "Create"        , "GradientStopForBrush" )

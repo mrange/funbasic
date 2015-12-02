@@ -275,7 +275,7 @@ namespace PowerShell.DirectX
       get;
       set;
     }
-      = 0.25;
+      = -0.25;
 
     [Parameter(Mandatory = false)]
     public string     ExtendMode
