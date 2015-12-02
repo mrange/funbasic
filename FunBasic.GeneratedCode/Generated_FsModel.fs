@@ -31,6 +31,10 @@
   | SetBackground        of color:string
   // Method: ShowWindow 
   | ShowWindow           
+  // Method: WaitForDownloads 
+  | WaitForDownloads     
+  // Method: WaitForRefresh 
+  | WaitForRefresh       
 
   // Prefix: InternalInput
   type InternalInput =

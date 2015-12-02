@@ -43,6 +43,7 @@ type Scene() =
       try
         try
           use wc    = new System.Net.WebClient ()
+          let uri   = fixString uri
           let uri   = Uri uri
           let! bits = wc.AsyncDownloadData <| uri
 
@@ -54,15 +55,14 @@ type Scene() =
         decrementDownloadCount ()
     }
 
-  member x.WaitForRefresh () : unit =
-    ignore <| refreshLock.Reset ()
-    ignore <| refreshLock.WaitOne ()
-
-  member x.WaitForDownloadsToComplete () =
-    waitForDownloadsToComplete ()
-
   member x.SendInput (input : Input) : unit =
     match input with
+    | GlobalInput (WaitForDownloads) ->
+      waitForDownloadsToComplete ()
+    | GlobalInput (WaitForRefresh) ->
+      // Improve on wait for refresh to support command buffering to ensure 60fps
+      ignore <| refreshLock.Reset ()
+      ignore <| refreshLock.WaitOne ()
     | BitmapInput (bitmapId, DownloadBitmap uri) ->
       // Download the bits before passing this to the render thread
       incrementDownloadCount ()

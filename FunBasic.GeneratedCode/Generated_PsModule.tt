@@ -1,0 +1,168 @@
+﻿<#@ include file      ="Generated_ApiModel.ttinclude" #>
+<#@ output  extension = ".cs"                         #>
+
+namespace PowerShell.DirectX
+{
+  using FunBasic.DirectX.ApiModel;
+
+  using System.Collections.ObjectModel;
+  using System.ComponentModel;
+  using System.Management.Automation;
+  using System.Management.Automation.Runspaces;
+
+<#
+  var prepend = "";
+
+  var grouped = model
+    .GroupBy (md => md.Prefix)
+    .OrderBy (g => g.Key.Name)
+    .ToArray ();
+
+#>
+  static class AllCmdLets
+  {
+    public static Collection<CmdletConfigurationEntry> CmdLets
+    {
+      get
+      {
+        var coll = new Collection<CmdletConfigurationEntry> ()
+        {
+<#
+  foreach (var g in grouped)
+  {
+    var prefix = g.Key;
+
+    if (prefix.IsInternal)
+    {
+      continue;
+    }
+
+#>
+          // ------------------------------------------------------------------------
+          // Prefix: <#=prefix.Name#>
+          // ------------------------------------------------------------------------
+
+<#
+  foreach (var md in g.OrderBy (md => md.Verb).ThenBy (md => md.Noun))
+  {
+#>
+          new CmdletConfigurationEntry ("<#=md.Verb#>-D2D<#=md.Noun#>", typeof(<#=md.Verb#><#=md.Noun#>Command), ""),
+<#
+  }
+  }
+#>
+        };
+
+        return coll;
+      }
+    }
+  }
+
+<#
+
+  foreach (var g in grouped)
+  {
+    var prefix = g.Key;
+
+    if (prefix.IsInternal)
+    {
+      continue;
+    }
+
+#>
+  // ------------------------------------------------------------------------
+  // Prefix: <#=prefix.Name#>
+  // ------------------------------------------------------------------------
+
+<#
+  foreach (var md in g.OrderBy (md => md.Verb).ThenBy (md => md.Noun))
+  {
+    var pds = prefix.PrependWith.Concat (md).ToArray ();
+#>
+  // Method: <#=md.Verb#><#=md.Noun#> <#=ToTypeTupleNames (pds)#>
+  sealed class <#=md.Verb#><#=md.Noun#>Command : Cmdlet
+  {
+<#
+  foreach (var p in pds)
+  {
+#>
+    [Parameter(Mandatory = <#=p.HasDefaultValue ? "false" : "true"#>)]
+    public <#=LeftJustify (p.Type, 10)#> <#=UpperFirst (p.Name)#>
+    {
+      get;
+      set;
+    }
+<#
+  if (p.HasDefaultValue)
+  {
+#>
+      = <#=p.DefaultValue#>;
+<#
+  }
+#>
+
+<#
+  }
+#>
+
+    protected override void ProcessRecord()
+    {
+      SceneManager.Scene.SendInput (
+        Input.New<#=prefix.Name#> (
+<#
+  prepend = "  ";
+  foreach (var p in prefix.PrependWith)
+  {
+#>
+          <#=prepend#><#=UpperFirst (p.Name)#>
+<#
+    prepend = ", ";
+  }
+
+  var ipds = md.ToArray ();
+  if (ipds.Length > 0)
+  {
+#>
+          <#=prepend#><#=prefix.Name#>.New<#=md.Verb#><#=md.Noun#> (
+<#
+  prepend = "  ";
+  foreach (var p in ipds)
+  {
+#>
+            <#=prepend#><#=UpperFirst (p.Name)#>
+<#
+    prepend = ", ";
+  }
+#>
+            )
+<#
+  }
+  else
+  {
+#>
+          <#=prepend#><#=prefix.Name#>.<#=md.Verb#><#=md.Noun#>
+<#
+  }
+#>
+          )
+        );
+    }
+  }
+
+<#
+  }
+  }
+#>
+}
+
+<#+
+  static string UpperFirst (string s)
+  {
+    if (string.IsNullOrEmpty (s))
+    {
+      return "";
+    }
+
+    return char.ToUpperInvariant (s[0]).ToString () + s.Substring (1);
+  }
+#>

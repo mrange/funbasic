@@ -19,6 +19,11 @@ type BrushId      = int<BrushMeasure>
 type TextFormatId = int<TextFormatMeasure>
 type VisualId     = int<VisualMeasure>
 
+let inline createBitmapId i     = i*1<BitmapMeasure>
+let inline createBrushId i      = i*1<BrushMeasure>
+let inline createTextFormatId i = i*1<TextFormatMeasure>
+let inline createVisualId i     = i*1<VisualMeasure>
+
 let traceException (e : #Exception) : unit =
   printfn "EXCEPTION: %s" e.Message
 
@@ -57,6 +62,8 @@ let disposeResourceDictionary (d : IDictionary<_, _*#IDisposable>) : unit =
       dispose (snd kv.Value)
   finally
       d.Clear ()
+
+let inline fixString (s : string) = if String.IsNullOrEmpty s then "" else s
 
 let inline getDescriptor (k : 'K) (d : Dictionary<'K, 'U*'V>) : 'U option =
   let ok, uv = d.TryGetValue k
@@ -187,6 +194,7 @@ let parseColor (color : string) : Color4 =
       | _ ->
         red
 
+  let color = fixString color
   let c = parse (color.Trim ())
   c.ToColor4 ()
 

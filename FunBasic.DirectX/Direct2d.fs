@@ -305,6 +305,7 @@ module Window =
     (title      : string                                                              )
     (width      : int                                                                 )
     (height     : int                                                                 )
+    (onInit     : Device -> unit                                                      )
     (onKeyUp    : int -> unit                                                         )
     (onRender   : ((unit -> unit) -> unit) -> Device -> Direct2D1.RenderTarget -> bool) =
     use syncContext         = new Windows.Forms.WindowsFormsSynchronizationContext ()
@@ -344,5 +345,7 @@ module Window =
 
       if not cont then
         form.Close ()
+
+    onInit !device
 
     Windows.RenderLoop.Run (form, render)

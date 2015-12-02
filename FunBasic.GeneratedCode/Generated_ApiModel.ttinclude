@@ -3,19 +3,29 @@
 <#+
   class ParameterDescriptor : BaseEntity<MethodDescriptor>
   {
-    public ParameterDescriptor (string type, string name)
+    public ParameterDescriptor (string type, string name, string defaultValue)
     {
-      Type = type ?? S_NoType;
-      Name = name ?? S_NoName;
+      Type          = type          ?? S_NoType ;
+      Name          = name          ?? S_NoName ;
+      DefaultValue  = defaultValue  ?? ""       ;
     }
 
-    public readonly string Type;
-    public readonly string Name;
+    public bool HasDefaultValue
+    {
+      get
+      {
+        return !string.IsNullOrEmpty (DefaultValue);
+      }
+    }
+
+    public readonly string Type         ;
+    public readonly string Name         ;
+    public readonly string DefaultValue ;
   }
 
-  static ParameterDescriptor PD (string type, string name)
+  static ParameterDescriptor PD (string type, string name, string defaultValue = null)
   {
-    return new ParameterDescriptor (type, name);
+    return new ParameterDescriptor (type, name, defaultValue);
   }
 
   class Prefix
@@ -68,51 +78,53 @@
         PD ("byte[]"  , "bits"    ),
       },
 
-      new MethodDescriptor  (GlobalInput      , "Set"           , "Background"          )
+      new MethodDescriptor  (GlobalInput      , "Set"           , "Background")
       {
-        PD ("string", "color"),
+        PD ("string", "color", "\"#004\""),
       },
-      new MethodDescriptor  (GlobalInput      , "Clear"         , "Visuals"             ) ,
-      new MethodDescriptor  (GlobalInput      , "Hide"          , "Window"              ) ,
-      new MethodDescriptor  (GlobalInput      , "Show"          , "Window"              ) ,
+      new MethodDescriptor  (GlobalInput      , "Clear"         , "Visuals"             ),
+      new MethodDescriptor  (GlobalInput      , "Hide"          , "Window"              ),
+      new MethodDescriptor  (GlobalInput      , "Show"          , "Window"              ),
+      new MethodDescriptor  (GlobalInput      , "Wait"          , "ForDownloads"        ),
+      new MethodDescriptor  (GlobalInput      , "Wait"          , "ForRefresh"          ),
 
       new MethodDescriptor  (BitmapInput      , "Download"      , "Bitmap"              )
       {
-        PD ("string", "uri"),
+        PD ("string", "uri", "\"http://cliparts.co/cliparts/BTg/ERG/BTgERG4oc.png\""),
       },
 
       new MethodDescriptor  (BrushInput       , "Create"        , "SolidBrush"          )
       {
-        PD ("string", "color"),
+        PD ("string", "color"     , "\"#fff\"" ),
       },
       new MethodDescriptor  (BrushInput       , "Create"        , "LinearGradientBrush" )
       {
-        PD ("double", "startX"    ),
-        PD ("double", "startY"    ),
-        PD ("double", "endX"      ),
-        PD ("double", "endY"      ),
-        PD ("string", "extendMode"),
+        PD ("double", "startX"    , "0.0"       ),
+        PD ("double", "startY"    , "0.0"       ),
+        PD ("double", "endX"      , "0.0"       ),
+        PD ("double", "endY"      , "1.0"       ),
+        PD ("string", "extendMode", "\"mirror\""),
       },
       new MethodDescriptor  (BrushInput       , "Create"        , "RadialGradientBrush" )
       {
-        PD ("double", "centerX"   ),
-        PD ("double", "centerY"   ),
-        PD ("double", "radiusX"   ),
-        PD ("double", "radiusY"   ),
-        PD ("double", "offsetX"   ),
-        PD ("double", "offsetY"   ),
-        PD ("string", "extendMode"),
+        PD ("double", "centerX"   , "0.5"       ),
+        PD ("double", "centerY"   , "0.5"       ),
+        PD ("double", "radiusX"   , "1.0"       ),
+        PD ("double", "radiusY"   , "1.0"       ),
+        PD ("double", "offsetX"   , "-0.25"     ),
+        PD ("double", "offsetY"   , "0.25"      ),
+        PD ("string", "extendMode", "\"mirror\""),
       },
       new MethodDescriptor  (BrushInput       , "Create"        , "GradientStopForBrush" )
       {
-        PD ("string", "color"     ),
-        PD ("double", "offset"    ),
+        PD ("string", "color"     , "\"#fff\""),
+        PD ("double", "offset"    , "0.0"     ),
       },
 
       new MethodDescriptor  (TextFormatInput  , "Create"        , "TextFormat"          )
       {
-        PD ("string", "fontFamily"),
-        PD ("double", "fontSize"  ),
+        PD ("string", "fontFamily"  , "\"Tahoma\""),
+        PD ("double", "fontSize"    , "24.0"      ),
       },
 
       new MethodDescriptor  (VisualInput      , "Remove"        , "Visual"              ),
@@ -122,54 +134,54 @@
       },
       new MethodDescriptor  (VisualInput      , "Move"          , "Visual"              )
       {
-        PD ("double", "x"),
-        PD ("double", "y"),
+        PD ("double", "x" , "100.0" ),
+        PD ("double", "y" , "100.0" ),
       },
       new MethodDescriptor  (VisualInput      , "Move"          , "VisualToTop"         ),
       new MethodDescriptor  (VisualInput      , "Move"          , "VisualToBottom"      ),
       new MethodDescriptor  (VisualInput      , "Resize"        , "Visual"              )
       {
-        PD ("double", "width"),
-        PD ("double", "height"),
+        PD ("double", "width"   , "100.0" ),
+        PD ("double", "height"  , "100.0" ),
       },
       new MethodDescriptor  (VisualInput      , "Create"        , "BitmapVisual"        )
       {
-        PD ("int"     , "bitmapId"),
-        PD ("double"  , "opacity" ),
-        PD ("double"  , "centerX" ),
-        PD ("double"  , "centerY" ),
-        PD ("double"  , "width"   ),
-        PD ("double"  , "height"  ),
+        PD ("int"     , "bitmapId"            ),
+        PD ("double"  , "opacity"   , "1.0"   ),
+        PD ("double"  , "centerX"   , "344.0" ),
+        PD ("double"  , "centerY"   , "257.0" ),
+        PD ("double"  , "width"     , "488.0" ),
+        PD ("double"  , "height"    , "314.0" ),
       },
       new MethodDescriptor  (VisualInput      , "Create"        , "RectangleVisual"     )
       {
-        PD ("int"     , "fillBrushId"   ),
-        PD ("int"     , "strokeBrushId" ),
-        PD ("double"  , "strokeWidth"   ),
-        PD ("double"  , "centerX"       ),
-        PD ("double"  , "centerY"       ),
-        PD ("double"  , "width"         ),
-        PD ("double"  , "height"        ),
+        PD ("int"     , "fillBrushId"   , "3"     ),
+        PD ("int"     , "strokeBrushId" , "1"     ),
+        PD ("double"  , "strokeWidth"   , "3.0"   ),
+        PD ("double"  , "centerX"       , "200.0" ),
+        PD ("double"  , "centerY"       , "100.0" ),
+        PD ("double"  , "width"         , "100.0" ),
+        PD ("double"  , "height"        , "100.0" ),
       },
       new MethodDescriptor  (VisualInput      , "Create"        , "EllipseVisual"       )
       {
-        PD ("int"     , "fillBrushId"   ),
-        PD ("int"     , "strokeBrushId" ),
-        PD ("double"  , "strokeWidth"   ),
-        PD ("double"  , "centerX"       ),
-        PD ("double"  , "centerY"       ),
-        PD ("double"  , "width"         ),
-        PD ("double"  , "height"        ),
+        PD ("int"     , "fillBrushId"   , "4"     ),
+        PD ("int"     , "strokeBrushId" , "1"     ),
+        PD ("double"  , "strokeWidth"   , "3.0"   ),
+        PD ("double"  , "centerX"       , "100.0" ),
+        PD ("double"  , "centerY"       , "200.0" ),
+        PD ("double"  , "width"         , "100.0" ),
+        PD ("double"  , "height"        , "100.0" ),
       },
       new MethodDescriptor  (VisualInput      , "Create"        , "TextVisual"          )
       {
-        PD ("int"     , "fillBrushId"   ),
-        PD ("int"     , "textFormatId"  ),
-        PD ("double"  , "centerX"       ),
-        PD ("double"  , "centerY"       ),
-        PD ("double"  , "width"         ),
-        PD ("double"  , "height"        ),
-        PD ("string"  , "text"          ),
+        PD ("int"     , "fillBrushId"   , "1"                 ),
+        PD ("int"     , "textFormatId"  , "0"                 ),
+        PD ("double"  , "centerX"       , "200.0"             ),
+        PD ("double"  , "centerY"       , "200.0"             ),
+        PD ("double"  , "width"         , "100.0"             ),
+        PD ("double"  , "height"        , "100.0"             ),
+        PD ("string"  , "text"          , "\"Hello World!\""  ),
       },
     };
 

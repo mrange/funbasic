@@ -70,7 +70,7 @@ D2D.CreateGradientStopForBrush  (brush_linearfill , "#05A", 0.75)
 D2D.CreateGradientStopForBrush  (brush_linearfill , "#024", 1)
 
 ' Wait for all downloads to complete
-D2D.WaitForDownloadsToComplete  ()
+D2D.WaitForDownloads            ()
 
 ' Create a text visual
 D2D.CreateTextVisual            (visual_text    , textFormat_std , 1, 400, 400, 800, 60, "Direct2D + FunBasic")

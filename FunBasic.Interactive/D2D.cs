@@ -5,6 +5,8 @@ namespace FunBasic.Library
 {
   public static partial class D2D
   {
+    static readonly object lockObject = new object ();
+
     static IKeyboard keyboard;
 
     static Scene scene = null;
@@ -15,7 +17,13 @@ namespace FunBasic.Library
       {
         if (scene == null)
         {
-          scene = new Scene ();
+          lock (lockObject)
+          {
+            if (scene == null)
+            {
+              scene = new Scene ();
+            }
+          }
         }
 
         return scene;
@@ -39,19 +47,15 @@ namespace FunBasic.Library
     {
       if (scene != null)
       {
-        DisposeIt (scene);
-        scene = null;
+        lock (lockObject)
+        {
+          if (scene != null)
+          {
+            DisposeIt (scene);
+            scene = null;
+          }
+        }
       }
-    }
-
-    public static void WaitForDownloadsToComplete ()
-    {
-      Scene.WaitForDownloadsToComplete ();
-    }
-
-    public static void WaitForRefresh ()
-    {
-      Scene.WaitForRefresh ();
     }
 
     public static string LastKey

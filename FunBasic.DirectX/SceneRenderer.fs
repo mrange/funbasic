@@ -59,7 +59,24 @@ let rec renderVisual (v : Visual) (d : Device) (rt : Direct2D1.RenderTarget) : u
       fb.Transform <- bt
       rt.DrawText (t, tfd, r, fb)
 
-let onKeyUp _ =
+let onInit (d : Device) : unit =
+  let brushes =
+    [|
+      0,      Color.Black
+      1,      Color.White
+      2,      Color.Red
+      3,      Color.Orange
+      4,      Color.Yellow
+      5,      Color.Green
+      6,      Color.Blue
+      7,      Color.Indigo
+      8,      Color.Violet
+    |]
+
+  for bid, color in brushes do
+    d.ReserveBrush (createBrushId bid) <| SolidBrush (color.ToColor4 ())
+
+let onKeyUp _ : unit =
   ()
 
 let regexExtendMode =
@@ -68,6 +85,7 @@ let regexExtendMode =
         )
 
 let parseExtendMode (em : string) : Direct2D1.ExtendMode =
+  let em = fixString em
   let m = regexExtendMode.Match em
   if m.Groups.["Clamp"].Success then
     Direct2D1.ExtendMode.Clamp
@@ -79,10 +97,6 @@ let parseExtendMode (em : string) : Direct2D1.ExtendMode =
     Direct2D1.ExtendMode.Clamp
 
 let createRenderer (onRefresh :  unit -> unit) =
-  let inline createBitmapId i     = i*1<BitmapMeasure>
-  let inline createBrushId i      = i*1<BrushMeasure>
-  let inline createTextFormatId i = i*1<TextFormatMeasure>
-  let inline createVisualId i     = i*1<VisualMeasure>
 
   let inline v (x : float) (y : float) =
     Vector2 (float32 x, float32 y)
@@ -137,6 +151,7 @@ let createRenderer (onRefresh :  unit -> unit) =
     | CreateTextVisual (fillBrushId, textFormatId, centerX, centerY, width, height, text) ->
       let r   = rcreate centerX centerY width height
       let bt  = btFromRect r
+      let text= fixString text
       TextVisual (createBrushId fillBrushId, createTextFormatId textFormatId, text, r, bt)
 
   let updateVisual k v u =
@@ -200,9 +215,17 @@ let createRenderer (onRefresh :  unit -> unit) =
         | DoNothing ->
           ()
         | CreateBitmapFromBits (bitmapId, bits) ->
-          d.ReserveBitmap (createBitmapId bitmapId) (BitmapBits bits)
+          if bits = null || bits.Length = 0 then
+            // TODO: Trace null bits
+            ()
+          else
+            d.ReserveBitmap (createBitmapId bitmapId) (BitmapBits bits)
       | GlobalInput gi ->
         match gi with
+        | WaitForDownloads
+        | WaitForRefresh ->
+          // Not expected here, handled by Scene
+          ()
         | ClearVisuals ->
           visuals.Clear ()
         | HideWindow ->
@@ -237,7 +260,8 @@ let createRenderer (onRefresh :  unit -> unit) =
           | _ ->
             ()
       | TextFormatInput (tfid, (CreateTextFormat (fontFamily, fontSize))) ->
-        let tfid = createTextFormatId tfid
+        let tfid        = createTextFormatId tfid
+        let fontFamily  = fixString fontFamily
         d.ReserveTextFormat tfid (SimpleTextFormat (fontFamily, float32 fontSize))
       | VisualInput (vid, vi) ->
         ignore <| visuals.CreateOrUpdate (createVisualId vid) vi createVisual updateVisual
@@ -253,7 +277,7 @@ let createRenderer (onRefresh :  unit -> unit) =
 
   let uiProc () =
     try
-      Window.show "FunBasic Direct2D" 1024 768 onKeyUp onRender
+      Window.show "FunBasic Direct2D" 1024 768 onInit onKeyUp onRender
     with
     | e ->
       traceException e

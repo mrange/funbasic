@@ -171,6 +171,28 @@ namespace FunBasic.Library
         );
     }
 
+    // Method: WaitForDownloads 
+    public static void WaitForDownloads (
+      )
+    {
+      Scene.SendInput (
+        Input.NewGlobalInput (
+            GlobalInput.WaitForDownloads
+          )
+        );
+    }
+
+    // Method: WaitForRefresh 
+    public static void WaitForRefresh (
+      )
+    {
+      Scene.SendInput (
+        Input.NewGlobalInput (
+            GlobalInput.WaitForRefresh
+          )
+        );
+    }
+
     // ------------------------------------------------------------------------
     // Prefix: TextFormatInput
     // ------------------------------------------------------------------------

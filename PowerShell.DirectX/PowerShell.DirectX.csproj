@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0B1E295E-9744-482D-947F-5E86986DAE30}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{6711EEE1-27CB-40AE-B98B-163487DD1F77}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FunBasic.GeneratedCode</RootNamespace>
-    <AssemblyName>FunBasic.GeneratedCode</AssemblyName>
+    <RootNamespace>PowerShell.DirectX</RootNamespace>
+    <AssemblyName>PowerShell.DirectX</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -34,7 +31,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Management.Automation.6.1.7601.17515\lib\net45\System.Management.Automation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,45 +45,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Generated_D2D.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Generated_D2D.tt</DependentUpon>
-    </Content>
-    <Content Include="Generated_PsModule.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Generated_PsModule.tt</DependentUpon>
-    </Content>
-    <Compile Include="Program.cs" />
+    <Compile Include="..\FunBasic.GeneratedCode\Generated_PsModule.cs">
+      <Link>Generated_PsModule.cs</Link>
+    </Compile>
+    <Compile Include="DirectXSnapIn.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Content Include="Generated_PsModule.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Generated_PsModule.cs</LastGenOutput>
-    </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="Generated_ApiModel.ttinclude" />
-    <None Include="HeaderCommon.ttinclude" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Generated_D2D.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Generated_D2D.cs</LastGenOutput>
-    </Content>
-    <Content Include="Generated_FsModel.fs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Generated_FsModel.tt</DependentUpon>
-    </Content>
-    <Content Include="Generated_FsModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Generated_FsModel.fs</LastGenOutput>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <ProjectReference Include="..\FunBasic.DirectX\FunBasic.DirectX.fsproj">
+      <Project>{48e6e448-b301-49e9-9f43-a6e63d29f7a6}</Project>
+      <Name>FunBasic.DirectX</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
